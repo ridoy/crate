@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="AmNz5M" name="NewProject" projectType="audioplug" jucerVersion="5.4.5"
+<JUCERPROJECT id="AmNz5M" name="CrateDigger" projectType="audioplug" jucerVersion="5.4.5"
               pluginFormats="buildAU,buildVST3">
-  <MAINGROUP id="Qnixqo" name="NewProject">
+  <MAINGROUP id="Qnixqo" name="CrateDigger">
     <GROUP id="{29DB2268-5733-9166-1D94-93DF4D5C0C8C}" name="Source">
       <FILE id="ugVGN2" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
