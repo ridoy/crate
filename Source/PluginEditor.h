@@ -1,12 +1,12 @@
 /*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin editor.
-
-  ==============================================================================
-*/
+ ==============================================================================
+ 
+ This file was auto-generated!
+ 
+ It contains the basic framework code for a JUCE plugin editor.
+ 
+ ==============================================================================
+ */
 
 #pragma once
 
@@ -16,44 +16,50 @@
 #include <regex>
 #include <iostream>
 #include <algorithm>
+#include <thread>
 
 //==============================================================================
 /**
-*/
+ */
 
 class AudioFileComponent : public Label
 {
 public:
-    String currentAudioFile = "/Users/ridoymajumdar/Documents/JUCE/extras/AudioPluginHost/Builds/MacOSX/build/Debug/test.mp3";
+    String currentAudioFile;
     void setCurrentAudioFile(String filename);
     void mouseDrag(const MouseEvent& event) override;
 };
 
-class NewProjectAudioProcessorEditor  : public AudioProcessorEditor,
-                                        public DragAndDropContainer
+class CrateDigger  : public AudioProcessorEditor,
+public DragAndDropContainer
 {
 public:
-    NewProjectAudioProcessorEditor (NewProjectAudioProcessor&);
-    ~NewProjectAudioProcessorEditor();
-
+    CrateDigger (NewProjectAudioProcessor&);
+    ~CrateDigger();
+    
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     void downloadVideo();
-
+    void setText();
+    void runYtdlChildProcess();
+    
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     NewProjectAudioProcessor& processor;
-    
+    TextButton header;
+    TextButton searchBar;
+    TextEditor searchBarInput;
+    TextButton downloadButton   { "Download" };
+
     Label titleLabel;
     Label inputLabel;
     TextEditor inputText;
-    TextEditor debugText;
-    TextButton downloadButton   { "Mownload audio from YouTube" };
+    TextButton debugText;
     TextButton dragButton { "Drag audio" };
     AudioFileComponent audioFileComponent;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessorEditor)
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
 };
 

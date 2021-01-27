@@ -166,7 +166,7 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new NewProjectAudioProcessorEditor (*this);
+    return new CrateDigger (*this);
 }
 
 //==============================================================================
