@@ -43,7 +43,8 @@ void CrateDigger::downloadVideo()
     String appDataLocationString = appDataLocation.getFullPathName();
     String ytdlCommand = "/usr/local/bin/youtube-dl --output " + appDataLocationString + "/cratedigger-audio/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location /usr/local/bin/ffmpeg " + youtubeUrl;
     ytdlChildProcess.start(ytdlCommand,0x03);
-
+    ytdlChildProcess.waitForProcessToFinish(30000);
+    
     String ytdlCommandFilename = "/usr/local/bin/youtube-dl --get-filename --output " + appDataLocationString + "/cratedigger-audio/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location /usr/local/bin/ffmpeg " + youtubeUrl;
     ytdlChildProcess.start(ytdlCommandFilename,0x03);
     juce::String c = ytdlChildProcess.readAllProcessOutput();
