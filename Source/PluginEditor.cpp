@@ -17,7 +17,7 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (400, 400);
 }
 
 CrateDigger::~CrateDigger()
@@ -48,6 +48,7 @@ void CrateDigger::downloadVideo()
     String ytdlCommandFilename = "/usr/local/bin/youtube-dl --get-filename --output " + appDataLocationString + "/cratedigger-audio/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location /usr/local/bin/ffmpeg " + youtubeUrl;
     ytdlChildProcess.start(ytdlCommandFilename,0x03);
     juce::String c = ytdlChildProcess.readAllProcessOutput();
+    waveformComponent.loadFile("");
     audioFileComponent.setText("Done loading, drag this into your DAW", dontSendNotification);
 
     downloadButton.setButtonText("Download");
@@ -67,8 +68,6 @@ void CrateDigger::paint (Graphics& g)
     header.setButtonText("CrateDigger v0.1");
     header.setColour(TextEditor::backgroundColourId, Colours::black);
     addAndMakeVisible(header);
-    searchBar.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
-    addAndMakeVisible(searchBar);
     
 //    debugText.setMultiLine(true);
     addAndMakeVisible(debugText);
@@ -83,6 +82,8 @@ void CrateDigger::paint (Graphics& g)
     addAndMakeVisible(audioFileComponent);
     addAndMakeVisible (downloadButton);
     downloadButton.onClick = [this]() { return this->downloadVideo(); };
+    
+    addAndMakeVisible(waveformComponent);
     
 }
 
@@ -102,6 +103,9 @@ void CrateDigger::resized()
     
     auto debugTextHeight = 100;
     debugText.setBounds(area.removeFromTop(debugTextHeight));
+    
+    auto waveformComponentHeight = 150;
+    waveformComponent.setBounds(area.removeFromTop(waveformComponentHeight));
 }
 
 void AudioFileComponent::mouseDrag(const MouseEvent& e) {

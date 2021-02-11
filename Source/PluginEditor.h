@@ -17,7 +17,7 @@
 #include <iostream>
 #include <algorithm>
 #include <thread>
-
+#include "Waveform.h"
 //==============================================================================
 /**
  */
@@ -49,7 +49,6 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& processor;
     TextButton header;
-    TextButton searchBar;
     TextEditor searchBarInput;
     TextButton downloadButton   { "Download" };
 
@@ -59,6 +58,8 @@ private:
     TextButton debugText;
     TextButton dragButton { "Drag audio" };
     AudioFileComponent audioFileComponent;
+    
+    Waveform waveformComponent;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
 };
