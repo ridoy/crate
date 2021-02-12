@@ -25,21 +25,11 @@
 class AudioFileComponent : public Label
 {
 public:
-    AudioFileComponent() {
-        //addAndMakeVisible(waveform);
-    }
-    
     String currentAudioFile;
-    void setCurrentAudioFile(String filename);
-    void mouseDrag(const MouseEvent& event) override;
+//    void setCurrentAudioFile(String filename);
+//    void mouseDrag(const MouseEvent& event) override;
     
-    void resized() override {
-        waveform.setBounds(0, 0, getWidth(), getHeight());
-    }
-    
-    Waveform waveform;
 private:
-//    Waveform waveform;
 };
 
 class CrateDigger  : public AudioProcessorEditor,
@@ -61,15 +51,13 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& processor;
     TextButton header;
-    TextEditor searchBarInput;
-    TextButton downloadButton   { "Download" };
+    TextEditor searchBarInput, bar;
+    TextButton downloadButton{"Download"};
 
-    Label titleLabel;
-    Label inputLabel;
-    TextEditor inputText;
     TextButton debugText;
-    TextButton dragButton { "Drag audio" };
-    AudioFileComponent audioFileComponent;
+    Label namePlugin;
+    Label downloadState;
+//    AudioFileComponent audioFileComponent;
     
     Waveform waveformComponent;
     

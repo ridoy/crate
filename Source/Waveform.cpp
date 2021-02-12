@@ -55,15 +55,15 @@ void Waveform::thumbnailChanged() {
 }
 
 void Waveform::paintIfNoFileLoaded(Graphics& g, const Rectangle<int>& thumbnailBounds) {
-    g.setColour(Colours::darkgrey);
+    g.setColour(Colours::lightgrey);
     g.fillRect(thumbnailBounds);
-    g.setColour(Colours::white);
+    g.setColour(Colours::black);
     g.drawFittedText("No File Downloaded", thumbnailBounds, Justification::centred, 1);
 }
 void Waveform::paintIfFileLoaded(Graphics& g, const Rectangle<int>& thumbnailBounds) {
-    g.setColour(Colours::white);
+    g.setColour(Colours::lightgrey);
     g.fillRect(thumbnailBounds);
-    g.setColour(Colours::blue);
+    g.setColour(Colours::steelblue);
     thumbnail.drawChannels(g, thumbnailBounds, 0.0, thumbnail.getTotalLength(), 0.8f);
 }
 
