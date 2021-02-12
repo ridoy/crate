@@ -15,8 +15,24 @@
 CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
+    header.setButtonText("CrateDigger v0.1");
+    header.setColour(TextEditor::backgroundColourId, Colours::black);
+    addAndMakeVisible(header);
+    
+    addAndMakeVisible(debugText);
+
+    addAndMakeVisible (searchBarInput);
+    searchBarInput.setMultiLine(false);
+    searchBarInput.setTextToShowWhenEmpty("Youtube URL goes here", Colours::dimgrey);
+    searchBarInput.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
+    searchBarInput.setColour (TextEditor::shadowColourId,  Colour (0x16000000));
+    
+    audioFileComponent.setColour(Label::backgroundColourId, Colours::darkblue);
+    addAndMakeVisible(audioFileComponent);
+    addAndMakeVisible (downloadButton);
+    downloadButton.onClick = [this]() { return this->downloadVideo(); };
+    
+    addAndMakeVisible(waveformComponent);
     setSize (400, 400);
 }
 
@@ -48,42 +64,22 @@ void CrateDigger::downloadVideo()
     String ytdlCommandFilename = "/usr/local/bin/youtube-dl --get-filename --output " + appDataLocationString + "/cratedigger-audio/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location /usr/local/bin/ffmpeg " + youtubeUrl;
     ytdlChildProcess.start(ytdlCommandFilename,0x03);
     juce::String c = ytdlChildProcess.readAllProcessOutput();
-    waveformComponent.loadFile("");
     audioFileComponent.setText("Done loading, drag this into your DAW", dontSendNotification);
 
     downloadButton.setButtonText("Download");
     c = c.replace("\n", "");
     c = c.replace("\r", "");
+    waveformComponent.loadFile(c);
+    audioFileComponent.waveform.loadFile(c);
     Logger::getCurrentLogger()->writeToLog(c);
     debugText.setButtonText(c);
 
     audioFileComponent.setCurrentAudioFile(c);
+    waveformComponent.setCurrentAudioFile(c);
 }
 
 void CrateDigger::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (Colours::white);
-    
-    header.setButtonText("CrateDigger v0.1");
-    header.setColour(TextEditor::backgroundColourId, Colours::black);
-    addAndMakeVisible(header);
-    
-//    debugText.setMultiLine(true);
-    addAndMakeVisible(debugText);
-
-    addAndMakeVisible (searchBarInput);
-    searchBarInput.setMultiLine(false);
-    searchBarInput.setTextToShowWhenEmpty("Youtube URL goes here", Colours::dimgrey);
-    searchBarInput.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
-    searchBarInput.setColour (TextEditor::shadowColourId,  Colour (0x16000000));
-    
-    audioFileComponent.setColour(Label::backgroundColourId, Colours::darkblue);
-    addAndMakeVisible(audioFileComponent);
-    addAndMakeVisible (downloadButton);
-    downloadButton.onClick = [this]() { return this->downloadVideo(); };
-    
-    addAndMakeVisible(waveformComponent);
     
 }
 
@@ -98,14 +94,12 @@ void CrateDigger::resized()
     searchBarInput.setBounds(searchBarArea.removeFromLeft(juce::jmax(80, 3 * (searchBarArea.getWidth() / 4))));
     downloadButton.setBounds(searchBarArea.removeFromLeft(juce::jmax(30, searchBarArea.getWidth() / 4)));
     
-    auto audioFileComponentHeight = 50;
-    audioFileComponent.setBounds(area.removeFromTop(audioFileComponentHeight));
-    
     auto debugTextHeight = 100;
     debugText.setBounds(area.removeFromTop(debugTextHeight));
     
-    auto waveformComponentHeight = 150;
-    waveformComponent.setBounds(area.removeFromTop(waveformComponentHeight));
+    waveformComponent.setBoundsRelative(0.0f, 0.6f, 1.0f, 0.2f);
+    
+    audioFileComponent.setBoundsRelative(0.0f, 0.4f, 1.0f, 0.2f) ;
 }
 
 void AudioFileComponent::mouseDrag(const MouseEvent& e) {

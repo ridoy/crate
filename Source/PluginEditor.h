@@ -25,9 +25,21 @@
 class AudioFileComponent : public Label
 {
 public:
+    AudioFileComponent() {
+        //addAndMakeVisible(waveform);
+    }
+    
     String currentAudioFile;
     void setCurrentAudioFile(String filename);
     void mouseDrag(const MouseEvent& event) override;
+    
+    void resized() override {
+        waveform.setBounds(0, 0, getWidth(), getHeight());
+    }
+    
+    Waveform waveform;
+private:
+//    Waveform waveform;
 };
 
 class CrateDigger  : public AudioProcessorEditor,

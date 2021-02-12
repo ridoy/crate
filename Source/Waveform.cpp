@@ -33,7 +33,7 @@ void Waveform::resized() {
 }
 
 void Waveform::loadFile(String pathString) {
-    File file("/Users/rodolfoortiz/Desktop/Audios\ prueba/553380__badoink__southside-funk.wav");
+    File file(pathString);
     FileInputStream inputStream(file);
 
     formatManager.clearFormats();
@@ -63,6 +63,23 @@ void Waveform::paintIfNoFileLoaded(Graphics& g, const Rectangle<int>& thumbnailB
 void Waveform::paintIfFileLoaded(Graphics& g, const Rectangle<int>& thumbnailBounds) {
     g.setColour(Colours::white);
     g.fillRect(thumbnailBounds);
-    g.setColour(Colours::cadetblue);
-    thumbnail.drawChannel(g, thumbnailBounds, 0.0, thumbnail.getTotalLength(), 0, 1.0f);
+    g.setColour(Colours::blue);
+    thumbnail.drawChannels(g, thumbnailBounds, 0.0, thumbnail.getTotalLength(), 0.8f);
 }
+
+void Waveform::mouseDrag(const MouseEvent& e) {
+    DragAndDropContainer* dragC = DragAndDropContainer::findParentDragContainerFor(this);
+    if (!dragC->isDragAndDropActive()) {
+        dragC->startDragging("Audio file",this);
+        Logger::getCurrentLogger()->writeToLog(currentAudioFile);
+        StringArray files = StringArray(currentAudioFile);
+        dragC->performExternalDragDropOfFiles(files, true);
+    }
+}
+
+void Waveform::setCurrentAudioFile(String filename) {
+    Logger::getCurrentLogger()->writeToLog(filename);
+    this->currentAudioFile = filename;
+}
+
+
