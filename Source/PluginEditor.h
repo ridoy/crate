@@ -17,7 +17,7 @@
 #include <iostream>
 #include <algorithm>
 #include <thread>
-
+#include "Waveform.h"
 //==============================================================================
 /**
  */
@@ -26,8 +26,10 @@ class AudioFileComponent : public Label
 {
 public:
     String currentAudioFile;
-    void setCurrentAudioFile(String filename);
-    void mouseDrag(const MouseEvent& event) override;
+//    void setCurrentAudioFile(String filename);
+//    void mouseDrag(const MouseEvent& event) override;
+    
+private:
 };
 
 class CrateDigger  : public AudioProcessorEditor,
@@ -49,16 +51,15 @@ private:
     // access the processor object that created it.
     NewProjectAudioProcessor& processor;
     TextButton header;
-    TextButton searchBar;
-    TextEditor searchBarInput;
-    TextButton downloadButton   { "Download" };
+    TextEditor searchBarInput, bar;
+    TextButton downloadButton{"Download"};
 
-    Label titleLabel;
-    Label inputLabel;
-    TextEditor inputText;
     TextButton debugText;
-    TextButton dragButton { "Drag audio" };
-    AudioFileComponent audioFileComponent;
+    Label namePlugin;
+    Label downloadState;
+//    AudioFileComponent audioFileComponent;
+    
+    Waveform waveformComponent;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
 };

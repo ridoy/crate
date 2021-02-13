@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="AmNz5M" name="CrateDigger" projectType="audioplug" jucerVersion="5.4.5"
-              pluginFormats="buildAU,buildVST3">
+<JUCERPROJECT id="AmNz5M" name="CrateDigger" projectType="audioplug" pluginFormats="buildAU,buildVST3"
+              displaySplashScreen="0" jucerFormatVersion="1" useAppConfig="1"
+              addUsingNamespaceToJuceHeader="1">
   <MAINGROUP id="Qnixqo" name="CrateDigger">
     <GROUP id="{29DB2268-5733-9166-1D94-93DF4D5C0C8C}" name="Source">
       <FILE id="ugVGN2" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -11,6 +12,8 @@
       <FILE id="IhwziN" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="pZGFnZ" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="kT5yj9" name="Waveform.cpp" compile="1" resource="0" file="Source/Waveform.cpp"/>
+      <FILE id="bEGsmb" name="Waveform.h" compile="0" resource="0" file="Source/Waveform.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
@@ -22,7 +25,7 @@
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../../JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../Applications/JUCE/modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="../../../JUCE/modules"/>
