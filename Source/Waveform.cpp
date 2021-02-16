@@ -33,15 +33,17 @@ void Waveform::resized() {
 }
 
 void Waveform::loadFile(String pathString) {
-    File file(pathString);
-    FileInputStream inputStream(file);
-
-    formatManager.clearFormats();
-    formatManager.registerBasicFormats();
-    formatReader = formatManager.createReaderFor(file);
-    
-    if(formatReader != nullptr) {
-        thumbnail.setSource(new FileInputSource(file));
+    if(pathString.isNotEmpty()) {
+        File file(pathString);
+        FileInputStream inputStream(file);
+        
+        formatManager.clearFormats();
+        formatManager.registerBasicFormats();
+        formatReader = formatManager.createReaderFor(file);
+        
+        if(formatReader != nullptr) {
+            thumbnail.setSource(new FileInputSource(file));
+        }
     }
 }
 
@@ -57,7 +59,7 @@ void Waveform::thumbnailChanged() {
 void Waveform::paintIfNoFileLoaded(Graphics& g, const Rectangle<int>& thumbnailBounds) {
     g.setColour(Colours::lightgrey);
     g.fillRect(thumbnailBounds);
-    g.setColour(Colours::black);
+    g.setColour(Colours::dimgrey);
     g.drawFittedText("No File Downloaded", thumbnailBounds, Justification::centred, 1);
 }
 void Waveform::paintIfFileLoaded(Graphics& g, const Rectangle<int>& thumbnailBounds) {

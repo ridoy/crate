@@ -26,11 +26,13 @@ class AudioFileComponent : public Label
 {
 public:
     String currentAudioFile;
-//    void setCurrentAudioFile(String filename);
-//    void mouseDrag(const MouseEvent& event) override;
+    void setCurrentAudioFile(String filename);
+    void mouseDrag(const MouseEvent& event) override;
     
 private:
 };
+
+//==============================================================================
 
 class CrateDigger  : public AudioProcessorEditor,
 public DragAndDropContainer
@@ -39,7 +41,6 @@ public:
     CrateDigger (NewProjectAudioProcessor&);
     ~CrateDigger();
     
-    //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     void downloadVideo();
@@ -47,18 +48,13 @@ public:
     void runYtdlChildProcess();
     
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     NewProjectAudioProcessor& processor;
-    TextButton header;
+
+    Label namePlugin;
     TextEditor searchBarInput, bar;
     TextButton downloadButton{"Download"};
-
-    TextButton debugText;
-    Label namePlugin;
-    Label downloadState;
-//    AudioFileComponent audioFileComponent;
-    
+    Label statusLabel;
+    Label debugText;
     Waveform waveformComponent;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
