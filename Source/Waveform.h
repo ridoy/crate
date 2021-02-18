@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-class Waveform : public Component, public ChangeListener, public DragAndDropContainer  {
+class Waveform : public Component, public ChangeListener, public DragAndDropContainer {
 public:
     Waveform();
     ~Waveform();
@@ -37,4 +37,5 @@ private:
     AudioThumbnail thumbnail;
     
     String currentAudioFile;
+    
 };
