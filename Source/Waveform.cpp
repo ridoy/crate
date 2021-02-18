@@ -80,8 +80,11 @@ void Waveform::mouseDrag(const MouseEvent& e) {
 }
 
 void Waveform::setCurrentAudioFile(String filename) {
-    Logger::getCurrentLogger()->writeToLog(filename);
     this->currentAudioFile = filename;
+}
+
+void Waveform::resetThumbnail() {
+    thumbnail.clear();
 }
 
 

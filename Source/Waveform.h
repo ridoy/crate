@@ -30,6 +30,8 @@ public:
     void mouseDrag(const MouseEvent&) override;
     void setCurrentAudioFile(String);
     
+    void resetThumbnail();
+    
 private:
     AudioFormatManager formatManager;
     AudioFormatReader* formatReader {nullptr};

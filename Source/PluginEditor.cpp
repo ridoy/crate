@@ -61,9 +61,6 @@ void CrateDigger::setText() {
 //==============================================================================
 void CrateDigger::downloadVideo()
 {
-    debugText.setText("Loading", dontSendNotification);
-//    this->setText();
-    
     juce::ChildProcess ytdlChildProcess;
     
     String youtubeUrl = searchBarInput.getTextValue().toString();
@@ -77,17 +74,22 @@ void CrateDigger::downloadVideo()
     
     String ytdlCommandFilename = "/usr/local/bin/youtube-dl --get-filename --output " + appDataLocationString + "/cratedigger-audio/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location /usr/local/bin/ffmpeg " + youtubeUrl;
     ytdlChildProcess.start(ytdlCommandFilename,0x03);
-    juce::String c = ytdlChildProcess.readAllProcessOutput();
-    statusLabel.setText("Done loading, drag this into your DAW", dontSendNotification);
-
-    downloadButton.setButtonText("Download");
-    c = c.replace("\n", "");
-    c = c.replace("\r", "");
-    waveformComponent.loadFile(c);
-    Logger::getCurrentLogger()->writeToLog(c);
-    debugText.setText(c, dontSendNotification);
-
-    waveformComponent.setCurrentAudioFile(c);
+    
+    String filePath = ytdlChildProcess.readAllProcessOutput();
+    filePath = filePath.replace("\n", "");
+    filePath = filePath.replace("\r", "");
+    statusLabel.setText("Download Error", dontSendNotification);
+    
+    if (!(filePath.startsWith("Usage") || filePath.startsWith("WARNING") || filePath.startsWith("ERROR"))) {
+        waveformComponent.loadFile(filePath);
+        waveformComponent.setCurrentAudioFile(filePath);
+        statusLabel.setText("Done loading, drag waveform into your DAW", dontSendNotification);
+        debugText.setText(filePath, dontSendNotification);
+    } else {
+        waveformComponent.resetThumbnail();
+        statusLabel.setText("Download Error", dontSendNotification);
+        debugText.setText(filePath, dontSendNotification);
+    }
 }
 
 void CrateDigger::paint (Graphics& g)
