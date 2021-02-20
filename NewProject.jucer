@@ -14,6 +14,8 @@
       <FILE id="pZGFnZ" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="kT5yj9" name="Waveform.cpp" compile="1" resource="0" file="Source/Waveform.cpp"/>
       <FILE id="bEGsmb" name="Waveform.h" compile="0" resource="0" file="Source/Waveform.h"/>
+      <FILE id="mIPgeA" name="LibrariesManager.cpp" compile="1" resource="0"
+            file="Source/LibrariesManager.cpp"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

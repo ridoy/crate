@@ -18,21 +18,7 @@
 #include <algorithm>
 #include <thread>
 #include "Waveform.h"
-//==============================================================================
-/**
- */
-
-class AudioFileComponent : public Label
-{
-public:
-    String currentAudioFile;
-    void setCurrentAudioFile(String filename);
-    void mouseDrag(const MouseEvent& event) override;
-    
-private:
-};
-
-//==============================================================================
+#include "LibrariesManager.cpp"
 
 class CrateDigger  : public AudioProcessorEditor,
 public DragAndDropContainer
@@ -44,8 +30,7 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void downloadVideo();
-    void setText();
-    void runYtdlChildProcess();
+    void processDownload();
     
 private:
     NewProjectAudioProcessor& processor;
@@ -56,6 +41,9 @@ private:
     Label statusLabel;
     Label debugText;
     Waveform waveformComponent;
+    
+    File downloadsFolder;
+    LibrariesManager librariesManager;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
 };
