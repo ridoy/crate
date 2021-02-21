@@ -18,7 +18,8 @@
 #include <algorithm>
 #include <thread>
 #include "Waveform.h"
-#include "LibrariesManager.cpp"
+#include "LibrariesManager.h"
+#include "PathsWindow.h"
 
 class CrateDigger  : public AudioProcessorEditor,
 public DragAndDropContainer
@@ -29,14 +30,16 @@ public:
     
     void paint (Graphics&) override;
     void resized() override;
+    void checkPathFiles();
     void downloadVideo();
     void processDownload();
+    void setPaths();
     
 private:
     NewProjectAudioProcessor& processor;
 
     Label namePlugin;
-    TextEditor searchBarInput, bar;
+    TextEditor searchBarInput;
     TextButton downloadButton{"Download"};
     Label statusLabel;
     Label debugText;
@@ -44,6 +47,9 @@ private:
     
     File downloadsFolder;
     LibrariesManager librariesManager;
+    
+    PathsWindow pathsWindow;
+    TextButton setPathsButton{"Set Paths"};
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
 };
