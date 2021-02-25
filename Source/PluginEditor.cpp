@@ -101,14 +101,30 @@ void CrateDigger::resized()
 }
 
 void CrateDigger::checkPathFiles() {
-    bool pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("youtube-dl_Path.txt").exists();
-    if (!pathFileExists) {
-        LibrariesManager::createPathFiles("youtube-dl");
+    //Code if running in macOS
+    if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
+        bool pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("youtube-dl_Path.txt").exists();
+        if (!pathFileExists) {
+            LibrariesManager::createPathFiles("youtube-dl");
+        }
+
+        pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("ffmpeg_Path.txt").exists();
+        if (!pathFileExists) {
+            LibrariesManager::createPathFiles("ffmpeg");
+        }
     }
     
-    pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("ffmpeg_Path.txt").exists();
-    if (!pathFileExists) {
-        LibrariesManager::createPathFiles("ffmpeg");
+    //Code if running in Windows
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
+        bool pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("youtube-dl_Path.txt").exists();
+        if (!pathFileExists) {
+            LibrariesManager::createPathFiles("youtube-dl");
+        }
+
+        pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("ffmpeg_Path.txt").exists();
+        if (!pathFileExists) {
+            LibrariesManager::createPathFiles("ffmpeg");
+        }
     }
 }
 

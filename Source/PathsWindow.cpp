@@ -82,9 +82,10 @@ void PathsWindow::buttonClicked(Button* buttonClicked) {
     
     if(buttonClicked == &browseYtdlButton) {
         FileChooser chooser("Find Youtube-dl Location", File::getSpecialLocation (File::userHomeDirectory), "");
-        if(chooser.browseForFileToOpen()) {
+        if (chooser.browseForFileToOpen()) {
             File newLocationPath(chooser.getResult());
             youtubedlPath = newLocationPath.getFullPathName();
+            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
         }
     }
     
@@ -93,6 +94,7 @@ void PathsWindow::buttonClicked(Button* buttonClicked) {
         if(chooser.browseForFileToOpen()) {
             File newLocationPath(chooser.getResult());
             ffmpegPath = newLocationPath.getFullPathName();
+            ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
         }
     }
 }
