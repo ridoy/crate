@@ -12,6 +12,7 @@
 
 Waveform::Waveform() : thumbnailCache(5), thumbnail(512, formatManager, thumbnailCache) {
     thumbnail.addChangeListener(this);
+    formatManager.registerBasicFormats();
     setSize(400, 100);
 }
 
@@ -35,14 +36,15 @@ void Waveform::resized() {
 void Waveform::loadFile(String pathString) {
     if(pathString.isNotEmpty()) {
         File file(pathString);
-        FileInputStream inputStream(file);
+        URL url(file);
+        AudioFormatReader* reader = nullptr;
         
-        formatManager.clearFormats();
-        formatManager.registerBasicFormats();
-        formatReader = formatManager.createReaderFor(file);
+//        formatManager.clearFormats();
+//        formatManager.registerBasicFormats();
+        reader = formatManager.createReaderFor(url.getLocalFile());
         
-        if(formatReader != nullptr) {
-            thumbnail.setSource(new FileInputSource(file));
+        if(reader != nullptr) {
+            thumbnail.setSource(new FileInputSource(url.getLocalFile()));
         }
     }
 }
@@ -70,17 +72,17 @@ void Waveform::paintIfFileLoaded(Graphics& g, const Rectangle<int>& thumbnailBou
 }
 
 void Waveform::mouseDrag(const MouseEvent& e) {
-    DragAndDropContainer* dragC = DragAndDropContainer::findParentDragContainerFor(this);
-    if (!dragC->isDragAndDropActive()) {
-        dragC->startDragging("Audio file",this);
-        Logger::getCurrentLogger()->writeToLog(currentAudioFile);
+    DragAndDropContainer* dragFile = DragAndDropContainer::findParentDragContainerFor(this);
+    
+    if (!dragFile->isDragAndDropActive()) {
+        dragFile->startDragging("Audio file",this);
         StringArray files = StringArray(currentAudioFile);
-        dragC->performExternalDragDropOfFiles(files, true);
+        dragFile->performExternalDragDropOfFiles(files, true);
     }
 }
 
-void Waveform::setCurrentAudioFile(String filename) {
-    this->currentAudioFile = filename;
+void Waveform::setCurrentAudioFile(String filePath) {
+    this->currentAudioFile = filePath;
 }
 
 void Waveform::resetThumbnail() {

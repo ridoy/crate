@@ -34,7 +34,7 @@ public:
     
 private:
     AudioFormatManager formatManager;
-    AudioFormatReader* formatReader {nullptr};
+//    AudioFormatReader* formatReader {nullptr};
     AudioThumbnailCache thumbnailCache;
     AudioThumbnail thumbnail;
     

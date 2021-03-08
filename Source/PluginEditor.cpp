@@ -146,11 +146,11 @@ void CrateDigger::downloadVideo()
     if (youtubedlLibraryExists == true && ffmpegLibraryExists == true)
         librariesExistsCase = 0;
     else if (youtubedlLibraryExists == false && ffmpegLibraryExists == false)
-        librariesExistsCase = 1;
+        librariesExistsCase = 0;
     else if (youtubedlLibraryExists == true && ffmpegLibraryExists == false)
-        librariesExistsCase = 2;
+        librariesExistsCase = 0;
     else if (youtubedlLibraryExists == false && ffmpegLibraryExists == true)
-        librariesExistsCase = 3;
+        librariesExistsCase = 0;
     
     switch (librariesExistsCase) {
         case 0:
@@ -178,16 +178,25 @@ void CrateDigger::processDownload() {
     
     //Process download
     String downloadsLocationString = downloadsFolder.getFullPathName();
-    String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsLocationString + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+//    String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsLocationString + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+//    ytdlChildProcess.start(ytdlCommand, 0x03);
+//    ytdlChildProcess.waitForProcessToFinish(30000);
+//
+//    String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsLocationString + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+//    ytdlChildProcess.start(ytdlCommandFilename, 0x03);
+    
+    String ytdlCommand = librariesManager.youtubedlPath + " -f bestaudio[ext=m4a] --output " + downloadsLocationString + "/%(title)s.%(ext)s " + youtubeUrl;
     ytdlChildProcess.start(ytdlCommand, 0x03);
     ytdlChildProcess.waitForProcessToFinish(30000);
     
-    String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsLocationString + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+    String ytdlCommandFilename = librariesManager.youtubedlPath + " -f bestaudio[ext=m4a] --get-filename --output " + downloadsLocationString + "/%(title)s.%(ext)s " + youtubeUrl;
     ytdlChildProcess.start(ytdlCommandFilename, 0x03);
+    
     
     String filePath = ytdlChildProcess.readAllProcessOutput();
     filePath = filePath.replace("\n", "");
     filePath = filePath.replace("\r", "");
+    DBG(filePath);
     
     //Log to plugin result from library
     if (filePath.startsWith("Usage") || filePath.startsWith("WARNING") || filePath.startsWith("ERROR")) {
