@@ -19,28 +19,40 @@ PathsWindow::PathsWindow() {
     instructionLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(youtubedlPathLabel);
     youtubedlPathLabel.setText("Youtube-dl Library Path:", dontSendNotification);
-    addAndMakeVisible(ffmpegPathLabel);
-    ffmpegPathLabel.setText("Ffmpeg Library Path:", dontSendNotification);
 
     //Set Text Editors
     youtubedlPathEditor.setColour(TextEditor::textColourId, Colours::whitesmoke);
     addAndMakeVisible(youtubedlPathEditor);
-    ffmpegPathEditor.setColour(TextEditor::textColourId, Colours::whitesmoke);
-    addAndMakeVisible(ffmpegPathEditor);
     
     //Set Button
     addAndMakeVisible(browseYtdlButton);
     browseYtdlButton.setAlpha(1.0f);
     browseYtdlButton.setColour(TextButton::buttonColourId, Colours::darkblue);
     browseYtdlButton.addListener(this);
-    addAndMakeVisible(browseFfmpegButton);
-    browseFfmpegButton.setAlpha(1.0f);
-    browseFfmpegButton.setColour(TextButton::buttonColourId, Colours::darkblue);
-    browseFfmpegButton.addListener(this);
     addAndMakeVisible(goBackButton);
     goBackButton.setAlpha(1.0f);
     goBackButton.setColour(TextButton::buttonColourId, Colours::grey);
     goBackButton.addListener(this);
+    
+    //==============================================================================
+    //Code if running in Windows
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
+        //Set Labels
+        addAndMakeVisible(ffmpegPathLabel);
+        ffmpegPathLabel.setText("Ffmpeg Library Path:", dontSendNotification);
+        
+        //Set Text Editors
+        ffmpegPathEditor.setColour(TextEditor::textColourId, Colours::whitesmoke);
+        addAndMakeVisible(ffmpegPathEditor);
+        
+        //Set Button
+        addAndMakeVisible(browseFfmpegButton);
+        browseFfmpegButton.setAlpha(1.0f);
+        browseFfmpegButton.setColour(TextButton::buttonColourId, Colours::darkblue);
+        browseFfmpegButton.addListener(this);
+    }
+    
+//    addAndMakeVisible(chooser);
 }
 
 PathsWindow::~PathsWindow() {
@@ -54,19 +66,25 @@ void PathsWindow::paint(Graphics& g) {
 void PathsWindow::resized() {
     instructionLabel.setBoundsRelative(0.0f, 0.05f, 1.0f, 0.1f);
     youtubedlPathLabel.setBoundsRelative(0.05f, 0.2f, 0.8f, 0.1f);
-    ffmpegPathLabel.setBoundsRelative(0.05f, 0.5f, 0.8f, 0.1f);
     
     youtubedlPathEditor.setBoundsRelative(0.1f, 0.3f, 0.8f, 0.1f);
-    ffmpegPathEditor.setBoundsRelative(0.1f, 0.6f, 0.8f, 0.1f);
 
     browseYtdlButton.setSize(80, 20);
     browseYtdlButton.setCentreRelative(0.5f, 0.45f);
-    browseFfmpegButton.setSize(80, 20);
-    browseFfmpegButton.setCentreRelative(0.5f, 0.75f);
     goBackButton.setSize(100, 30);
     goBackButton.setCentreRelative(0.5f, 0.9f);
     
+    //==============================================================================
+    //Code if running in Windows
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
+        ffmpegPathLabel.setBoundsRelative(0.05f, 0.5f, 0.8f, 0.1f);
+        ffmpegPathEditor.setBoundsRelative(0.1f, 0.6f, 0.8f, 0.1f);
+        browseFfmpegButton.setSize(80, 20);
+        browseFfmpegButton.setCentreRelative(0.5f, 0.75f);
+    }
     
+//    chooser.setTopLeftPosition(28, 153);
+//    chooser.setSize(307, 298);
 }
 
 void PathsWindow::dismissWindow() {
@@ -86,6 +104,11 @@ void PathsWindow::buttonClicked(Button* buttonClicked) {
             File newLocationPath(chooser.getResult());
             youtubedlPath = newLocationPath.getFullPathName();
             youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
+//        chooser.launchAsync(flags, [](const FileChooser& fc) {
+//            File newLocationPath(fc.getResult());
+//            youtubedlPath = newLocationPath.getFullPathName();
+//            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
+//        });
         }
     }
     

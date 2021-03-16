@@ -11,7 +11,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include <thread>
-//==============================================================================
+
 CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {
@@ -107,13 +107,9 @@ void CrateDigger::checkPathFiles() {
         if (!pathFileExists) {
             LibrariesManager::createPathFiles("youtube-dl");
         }
-
-        pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("ffmpeg_Path.txt").exists();
-        if (!pathFileExists) {
-            LibrariesManager::createPathFiles("ffmpeg");
-        }
     }
     
+    //==============================================================================
     //Code if running in Windows
     if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
         bool pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("youtube-dl_Path.txt").exists();
@@ -130,68 +126,115 @@ void CrateDigger::checkPathFiles() {
 
 void CrateDigger::downloadVideo()
 {
-    //Update Libraries paths if changed
-    if ((librariesManager.youtubedlPath != pathsWindow.getYotubedlPath()) || (librariesManager.ffmpegPath != pathsWindow.getFfmpegPath())) {
-        librariesManager.updateLibrariesPaths(pathsWindow.getYotubedlPath(), pathsWindow.getFfmpegPath());
+    //Code if running in macOS
+    if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
+        //Update Libraries paths if changed
+        if ((librariesManager.youtubedlPath != pathsWindow.getYotubedlPath())) {
+            librariesManager.updateLibrariesPaths(pathsWindow.getYotubedlPath(), "");
+        }
+        
+        File youtubedlLibrary(librariesManager.youtubedlPath);
+        
+        //Check if library exists and process or show alert if not
+        bool youtubedlLibraryExists = youtubedlLibrary.exists();
+        int librariesExistsCase = 0;
+        
+        if (youtubedlLibraryExists == true)
+            librariesExistsCase = 0;
+        else
+            librariesExistsCase = 1;
+        
+        switch (librariesExistsCase) {
+            case 0:
+                processDownload();
+                break;
+            case 1:
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl library found", "Check Youtube-dl library path", "Close", nullptr);
+                break;
+                
+            default:
+                processDownload();
+                break;
+        }
     }
-    
-    File youtubedlLibrary(librariesManager.youtubedlPath);
-    File ffmpegLibrary(librariesManager.ffmpegPath);
-    
-    //Check if libraries exists and process or show alert if not
-    bool youtubedlLibraryExists = youtubedlLibrary.exists();
-    bool ffmpegLibraryExists = ffmpegLibrary.exists();
-    int librariesExistsCase = 0;
-    
-    if (youtubedlLibraryExists == true && ffmpegLibraryExists == true)
-        librariesExistsCase = 0;
-    else if (youtubedlLibraryExists == false && ffmpegLibraryExists == false)
-        librariesExistsCase = 0;
-    else if (youtubedlLibraryExists == true && ffmpegLibraryExists == false)
-        librariesExistsCase = 0;
-    else if (youtubedlLibraryExists == false && ffmpegLibraryExists == true)
-        librariesExistsCase = 0;
-    
-    switch (librariesExistsCase) {
-        case 0:
-            processDownload();
-            break;
-        case 1:
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
-            break;
-        case 2:
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Ffmpeg library found", "Check Ffmpeg library path", "Close", nullptr);
-            break;
-        case 3:
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl library found", "Check Youtube-dl library path", "Close", nullptr);
-            break;
-            
-        default:
-            processDownload();
-            break;
+
+    //==============================================================================
+    //Code if running in Windows
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
+        //Update Libraries paths if changed
+        if ((librariesManager.youtubedlPath != pathsWindow.getYotubedlPath()) || (librariesManager.ffmpegPath != pathsWindow.getFfmpegPath())) {
+            librariesManager.updateLibrariesPaths(pathsWindow.getYotubedlPath(), pathsWindow.getFfmpegPath());
+        }
+        
+        File youtubedlLibrary(librariesManager.youtubedlPath);
+        File ffmpegLibrary(librariesManager.ffmpegPath);
+        
+        //Check if libraries exists and process or show alert if not
+        bool youtubedlLibraryExists = youtubedlLibrary.exists();
+        bool ffmpegLibraryExists = ffmpegLibrary.exists();
+        int librariesExistsCase = 0;
+        
+        if (youtubedlLibraryExists == true && ffmpegLibraryExists == true)
+            librariesExistsCase = 0;
+        else if (youtubedlLibraryExists == false && ffmpegLibraryExists == false)
+            librariesExistsCase = 0;
+        else if (youtubedlLibraryExists == true && ffmpegLibraryExists == false)
+            librariesExistsCase = 0;
+        else if (youtubedlLibraryExists == false && ffmpegLibraryExists == true)
+            librariesExistsCase = 0;
+        
+        switch (librariesExistsCase) {
+            case 0:
+                processDownload();
+                break;
+            case 1:
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
+                break;
+            case 2:
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Ffmpeg library found", "Check Ffmpeg library path", "Close", nullptr);
+                break;
+            case 3:
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl library found", "Check Youtube-dl library path", "Close", nullptr);
+                break;
+                
+            default:
+                processDownload();
+                break;
+        }
     }
 }
 
 void CrateDigger::processDownload() {
+    
+    
     juce::ChildProcess ytdlChildProcess;
     String youtubeUrl = searchBarInput.getTextValue().toString();
     
     //Process download
     String downloadsLocationString = downloadsFolder.getFullPathName();
-//    String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsLocationString + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
-//    ytdlChildProcess.start(ytdlCommand, 0x03);
-//    ytdlChildProcess.waitForProcessToFinish(30000);
-//
-//    String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsLocationString + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
-//    ytdlChildProcess.start(ytdlCommandFilename, 0x03);
     
-    String ytdlCommand = librariesManager.youtubedlPath + " -f bestaudio[ext=m4a] --output " + downloadsLocationString + "/%(title)s.%(ext)s " + youtubeUrl;
-    ytdlChildProcess.start(ytdlCommand, 0x03);
-    ytdlChildProcess.waitForProcessToFinish(30000);
-    
-    String ytdlCommandFilename = librariesManager.youtubedlPath + " -f bestaudio[ext=m4a] --get-filename --output " + downloadsLocationString + "/%(title)s.%(ext)s " + youtubeUrl;
-    ytdlChildProcess.start(ytdlCommandFilename, 0x03);
-    
+    //==============================================================================
+    //Code if running in macOS
+    if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
+        String ytdlCommand = librariesManager.youtubedlPath + " -f bestaudio[ext=m4a] --output " + downloadsLocationString + "/%(title)s.%(ext)s " + youtubeUrl;
+        ytdlChildProcess.start(ytdlCommand, 0x03);
+        ytdlChildProcess.waitForProcessToFinish(30000);
+        
+        String ytdlCommandFilename = librariesManager.youtubedlPath + " -f bestaudio[ext=m4a] --get-filename --output " + downloadsLocationString + "/%(title)s.%(ext)s " + youtubeUrl;
+        ytdlChildProcess.start(ytdlCommandFilename, 0x03);
+    }
+
+    //==============================================================================
+    //Code if running in Windows
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
+        String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsLocationString + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+        ytdlChildProcess.start(ytdlCommand, 0x03);
+        ytdlChildProcess.waitForProcessToFinish(30000);
+
+        String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsLocationString + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+        ytdlChildProcess.start(ytdlCommandFilename, 0x03);
+    }
+    //==============================================================================
     
     String filePath = ytdlChildProcess.readAllProcessOutput();
     filePath = filePath.replace("\n", "");

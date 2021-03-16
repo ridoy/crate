@@ -27,7 +27,7 @@ struct LibrariesManager
     };
 
     static File getApplicationDataDirectory() {
-        auto file = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+        auto file = juce::File::getSpecialLocation(juce::File::globalApplicationsDirectory)
         .getChildFile("CrateDigger-Audio");
 
         return createDirectory(file);
@@ -49,15 +49,11 @@ struct LibrariesManager
         //Code if running in macOS
         if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
             if (libraryName == "youtube-dl") {
-                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("/usr/local/bin/youtube-dl");
+                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("/Applications/CrateDigger-Audio/youtube-dl");
             }
-
-            if (libraryName == "ffmpeg") {
-                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("/usr/local/bin/ffmpeg");
-            }
-            DBG("macpaths");
         }
 
+        //==============================================================================
         //Code if running in Windows
         if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
             if (libraryName == "youtube-dl") {
@@ -67,7 +63,6 @@ struct LibrariesManager
             if (libraryName == "ffmpeg") {
                 createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("C:\\Users\\rudol\\OneDrive\\Documentos\\Librerias\\ffmpeg.exe");
             }
-            DBG("winpaths");
         }
 
     };
@@ -79,6 +74,7 @@ struct LibrariesManager
             ffmpegPath = getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("ffmpeg_Path.txt").loadFileAsString();
         }
 
+        //==============================================================================
         //Code if running in Windows
         if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
             youtubedlPath = getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("youtube-dl_Path.txt").loadFileAsString();
@@ -91,11 +87,9 @@ struct LibrariesManager
         if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
             getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("youtube-dl_Path.txt").replaceWithText(_youtubedlPath);
             youtubedlPath = getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("youtube-dl_Path.txt").loadFileAsString();
-
-            getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("ffmpeg_Path.txt").replaceWithText(_ffmpegPath);
-            ffmpegPath = getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("ffmpeg_Path.txt").loadFileAsString();
         }
 
+        //==============================================================================
         //Code if running in Windows
         if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
             getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("youtube-dl_Path.txt").replaceWithText(_youtubedlPath);

@@ -38,4 +38,8 @@ private:
     String youtubedlPath, ffmpegPath;
     
     LibrariesManager librariesManager;
+    
+//    int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+//    
+//    FileBrowserComponent chooser;
 };
