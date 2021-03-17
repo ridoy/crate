@@ -16,7 +16,7 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {
     //Title Plugin Name
-    namePlugin.setText("CrateDigger v0.1", dontSendNotification);
+    namePlugin.setText("CrateDigger v1.0", dontSendNotification);
     namePlugin.setColour(Label::ColourIds::textColourId, Colours::darkblue);
     namePlugin.setFont(Font(40.0f, Font::FontStyleFlags::bold));
     namePlugin.setJustificationType(Justification::centred);

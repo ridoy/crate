@@ -27,10 +27,22 @@ struct LibrariesManager
     };
 
     static File getApplicationDataDirectory() {
-        auto file = juce::File::getSpecialLocation(juce::File::globalApplicationsDirectory)
-        .getChildFile("CrateDigger-Audio");
+        //Code if running in macOS
+        if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
+            auto file = juce::File::getSpecialLocation(juce::File::globalApplicationsDirectory)
+                .getChildFile("CrateDigger-Audio");
 
-        return createDirectory(file);
+            return createDirectory(file);
+        }
+
+        //==============================================================================
+        //Code if running in Windows
+        if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
+            auto file = juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory)
+                .getChildFile("CrateDigger-Audio");
+
+            return createDirectory(file);
+        }
     };
 
     static File getFolderDirectory(Folder folder) {
@@ -57,11 +69,11 @@ struct LibrariesManager
         //Code if running in Windows
         if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
             if (libraryName == "youtube-dl") {
-                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("C:\\Program Files\\CrateDigger\\youtube-dl.exe");
+                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("C:\\ProgramData\\CrateDigger-Audio\\youtube-dl.exe");
             }
 
             if (libraryName == "ffmpeg") {
-                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("C:\\Users\\rudol\\OneDrive\\Documentos\\Librerias\\ffmpeg.exe");
+                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("\"C:\\ProgramData\\CrateDigger-Audio\\ffmpeg.exe\"");
             }
         }
 
@@ -95,7 +107,7 @@ struct LibrariesManager
             getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("youtube-dl_Path.txt").replaceWithText(_youtubedlPath);
             youtubedlPath = getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("youtube-dl_Path.txt").loadFileAsString();
 
-            getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("ffmpeg_Path.txt").replaceWithText(_ffmpegPath);
+            getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("ffmpeg_Path.txt").replaceWithText("\"" + _ffmpegPath + "\"");
             ffmpegPath = getApplicationDataDirectory().getChildFile("windows_Paths").getChildFile("ffmpeg_Path.txt").loadFileAsString();
         }
     };

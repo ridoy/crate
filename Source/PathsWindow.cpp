@@ -67,7 +67,7 @@ void PathsWindow::resized() {
     instructionLabel.setBoundsRelative(0.0f, 0.05f, 1.0f, 0.1f);
     youtubedlPathLabel.setBoundsRelative(0.05f, 0.2f, 0.8f, 0.1f);
     
-    youtubedlPathEditor.setBoundsRelative(0.1f, 0.3f, 0.8f, 0.1f);
+    youtubedlPathEditor.setBoundsRelative(0.05f, 0.3f, 0.9f, 0.1f);
 
     browseYtdlButton.setSize(80, 20);
     browseYtdlButton.setCentreRelative(0.5f, 0.45f);
@@ -78,7 +78,7 @@ void PathsWindow::resized() {
     //Code if running in Windows
     if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
         ffmpegPathLabel.setBoundsRelative(0.05f, 0.5f, 0.8f, 0.1f);
-        ffmpegPathEditor.setBoundsRelative(0.1f, 0.6f, 0.8f, 0.1f);
+        ffmpegPathEditor.setBoundsRelative(0.05f, 0.6f, 0.9f, 0.1f);
         browseFfmpegButton.setSize(80, 20);
         browseFfmpegButton.setCentreRelative(0.5f, 0.75f);
     }
@@ -117,7 +117,12 @@ void PathsWindow::buttonClicked(Button* buttonClicked) {
         if(chooser.browseForFileToOpen()) {
             File newLocationPath(chooser.getResult());
             ffmpegPath = newLocationPath.getFullPathName();
-            ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
+
+            if (ffmpegPath.isQuotedString()) {
+                String ffmpegPathUnquoted = ffmpegPath.unquoted();
+                ffmpegPathEditor.setText(ffmpegPathUnquoted, dontSendNotification);
+            } else
+                ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
         }
     }
 }
@@ -127,7 +132,13 @@ void PathsWindow::setLibrariesPaths(String& _youtubedlPath, String& _ffmpegPath)
     ffmpegPath = _ffmpegPath;
     
     youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
-    ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
+
+    if (ffmpegPath.isQuotedString()) {
+        String ffmpegPathUnquoted = ffmpegPath.unquoted();
+        ffmpegPathEditor.setText(ffmpegPathUnquoted, dontSendNotification);
+    }
+    else
+        ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
 }
 
 String PathsWindow::getYotubedlPath() {
