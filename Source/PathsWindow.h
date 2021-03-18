@@ -39,7 +39,6 @@ private:
     
     LibrariesManager librariesManager;
     
-//    int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-//    
-//    FileBrowserComponent chooser;
+    int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+    std::unique_ptr<FileChooser> chooser;
 };

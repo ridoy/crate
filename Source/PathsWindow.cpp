@@ -52,7 +52,6 @@ PathsWindow::PathsWindow() {
         browseFfmpegButton.addListener(this);
     }
     
-//    addAndMakeVisible(chooser);
 }
 
 PathsWindow::~PathsWindow() {
@@ -82,9 +81,7 @@ void PathsWindow::resized() {
         browseFfmpegButton.setSize(80, 20);
         browseFfmpegButton.setCentreRelative(0.5f, 0.75f);
     }
-    
-//    chooser.setTopLeftPosition(28, 153);
-//    chooser.setSize(307, 298);
+   
 }
 
 void PathsWindow::dismissWindow() {
@@ -99,31 +96,34 @@ void PathsWindow::buttonClicked(Button* buttonClicked) {
     }
     
     if(buttonClicked == &browseYtdlButton) {
-        FileChooser chooser("Find Youtube-dl Location", File::getSpecialLocation (File::userHomeDirectory), "");
-        if (chooser.browseForFileToOpen()) {
-            File newLocationPath(chooser.getResult());
-            youtubedlPath = newLocationPath.getFullPathName();
-            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
-//        chooser.launchAsync(flags, [](const FileChooser& fc) {
-//            File newLocationPath(fc.getResult());
-//            youtubedlPath = newLocationPath.getFullPathName();
-//            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
-//        });
-        }
+        chooser.reset (new FileChooser ("Find Youtube-dl Location", File::getSpecialLocation (File::userHomeDirectory), ""));
+        chooser->launchAsync (flags, [=] (const FileChooser& fc) {
+            File newLocationPath(fc.getResult());
+            if (newLocationPath.getFullPathName().isNotEmpty()) {
+                youtubedlPath = newLocationPath.getFullPathName();
+                youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
+            }
+        });
+      
     }
     
     if(buttonClicked == &browseFfmpegButton) {
-        FileChooser chooser("Find Ffmpeg Location", File::getSpecialLocation (File::userHomeDirectory), "");
-        if(chooser.browseForFileToOpen()) {
-            File newLocationPath(chooser.getResult());
-            ffmpegPath = newLocationPath.getFullPathName();
+        chooser.reset(new FileChooser("Find Youtube-dl Location", File::getSpecialLocation(File::userHomeDirectory), ""));
+        chooser->launchAsync(flags, [=](const FileChooser& fc) {
+            File newLocationPath(fc.getResult());
 
-            if (ffmpegPath.isQuotedString()) {
-                String ffmpegPathUnquoted = ffmpegPath.unquoted();
-                ffmpegPathEditor.setText(ffmpegPathUnquoted, dontSendNotification);
-            } else
-                ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
-        }
+            if (newLocationPath.getFullPathName().isNotEmpty()) {
+                ffmpegPath = newLocationPath.getFullPathName();
+
+                if (ffmpegPath.isQuotedString()) {
+                    String ffmpegPathUnquoted = ffmpegPath.unquoted();
+                    ffmpegPathEditor.setText(ffmpegPathUnquoted, dontSendNotification);
+                }
+                else
+                    ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
+            }
+        });
+
     }
 }
 
