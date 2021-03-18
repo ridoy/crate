@@ -99,17 +99,33 @@ void PathsWindow::buttonClicked(Button* buttonClicked) {
     }
     
     if(buttonClicked == &browseYtdlButton) {
-        FileChooser chooser("Find Youtube-dl Location", File::getSpecialLocation (File::userHomeDirectory), "");
-        if (chooser.browseForFileToOpen()) {
-            File newLocationPath(chooser.getResult());
-            youtubedlPath = newLocationPath.getFullPathName();
-            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
+//        FileChooser chooser("Find Youtube-dl Location", File::getSpecialLocation (File::userHomeDirectory), "");
+        
+        chooser.reset (new FileChooser ("Find Youtube-dl Location", File::getSpecialLocation (File::userHomeDirectory), ""));
+        chooser->launchAsync (flags, [=] (const FileChooser& fc) {
+            File newLocationPath(fc.getResult());
+            if (newLocationPath.getFullPathName().isNotEmpty()) {
+                youtubedlPath = newLocationPath.getFullPathName();
+                youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
+            }
+        });
+//        if (chooser.browseForFileToOpen()) {
+//            File newLocationPath(chooser.getResult());
+//            youtubedlPath = newLocationPath.getFullPathName();
+//            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
 //        chooser.launchAsync(flags, [](const FileChooser& fc) {
 //            File newLocationPath(fc.getResult());
 //            youtubedlPath = newLocationPath.getFullPathName();
 //            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
 //        });
-        }
+//        }
+        
+//        chooser.launchAsync(flags, [=](const FileChooser& chooser) {
+//            File newLocationPath(chooser.getResult());
+//            youtubedlPath = newLocationPath.getFullPathName();
+//            youtubedlPathEditor.setText(youtubedlPath, dontSendNotification);
+//        });
+        
     }
     
     if(buttonClicked == &browseFfmpegButton) {
