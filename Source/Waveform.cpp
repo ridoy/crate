@@ -13,6 +13,7 @@
 Waveform::Waveform() : thumbnailCache(5), thumbnail(512, formatManager, thumbnailCache) {
     thumbnail.addChangeListener(this);
     formatManager.registerBasicFormats();
+    
     setSize(400, 100);
 }
 

@@ -172,15 +172,47 @@ AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 //==============================================================================
 void NewProjectAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    ValueTree state("CrateDiggerTree");
+    
+    state.setProperty("SearchBar", textEditorsStates[0], nullptr);
+    state.setProperty("StatusLabel", textEditorsStates[1], nullptr);
+    state.setProperty("DebugText", textEditorsStates[2], nullptr);
+    state.setProperty("WaveformState", waveformStatus, nullptr);
+    
+    MemoryOutputStream stream(destData, false);
+    state.writeToStream(stream);
 }
 
 void NewProjectAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    ValueTree tree = ValueTree::readFromData(data, sizeInBytes);
+    
+    if(tree.isValid()) {
+        if(tree.hasProperty("SearchBar"))
+            textEditorsStates[0] = tree.getProperty("SearchBar");
+        if(tree.hasProperty("StatusLabel"))
+            textEditorsStates[1] = tree.getProperty("StatusLabel");
+        if(tree.hasProperty("DebugText"))
+            textEditorsStates[2] = tree.getProperty("DebugText");
+        if(tree.hasProperty("WaveformState"))
+            waveformStatus = tree.getProperty("WaveformState");
+    }
+}
+
+void NewProjectAudioProcessor::setTextEditorsStates(int index, String textEditorInfo) {
+    textEditorsStates[index] = textEditorInfo;
+}
+
+String NewProjectAudioProcessor::getTextEditorsStates(int index) {
+    return textEditorsStates[index];
+}
+
+void NewProjectAudioProcessor::setWaveformStatus(String pathForWaveform) {
+    waveformStatus = pathForWaveform;
+}
+
+String NewProjectAudioProcessor::getWaveformStatus() {
+    return waveformStatus;
 }
 
 //==============================================================================
