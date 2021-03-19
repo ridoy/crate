@@ -61,7 +61,10 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
     downloadsFolder = LibrariesManager::getFolderDirectory(LibrariesManager::Folder::Downloads);
     librariesManager.getLibrariesPaths();
     
+    waveformComponent.loadFile(processor.getWaveformStatus());
+    waveformComponent.setCurrentAudioFile(processor.getWaveformStatus());
     addAndMakeVisible(waveformComponent);
+    
     
     addAndMakeVisible(pathsWindow);
     pathsWindow.setVisible(false);
@@ -80,6 +83,9 @@ CrateDigger::~CrateDigger()
     
     if (debugText.getText().isNotEmpty())
         processor.setTextEditorsStates(2, debugText.getText());
+    
+    if (filePath.isNotEmpty())
+        processor.setWaveformStatus(filePath);
 }
 
 void CrateDigger::paint (Graphics& g)
@@ -245,7 +251,7 @@ void CrateDigger::processDownload() {
     }
     //==============================================================================
     
-    String filePath = ytdlChildProcess.readAllProcessOutput();
+    filePath = ytdlChildProcess.readAllProcessOutput();
     filePath = filePath.replace("\n", "");
     filePath = filePath.replace("\r", "");
     

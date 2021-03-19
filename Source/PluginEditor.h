@@ -48,6 +48,8 @@ private:
     File downloadsFolder;
     LibrariesManager librariesManager;
     
+    String filePath;
+    
     PathsWindow pathsWindow;
     TextButton setPathsButton{"Set Paths"};
     

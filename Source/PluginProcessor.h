@@ -57,6 +57,9 @@ public:
     
     void setTextEditorsStates(int index, String textEditorInfo);
     String getTextEditorsStates(int index);
+    
+    void setWaveformStatus(String pathForWaveform);
+    String getWaveformStatus();
 
 private:
     

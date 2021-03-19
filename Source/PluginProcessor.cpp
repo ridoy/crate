@@ -191,6 +191,14 @@ String NewProjectAudioProcessor::getTextEditorsStates(int index) {
     return textEditorsStates[index];
 }
 
+void NewProjectAudioProcessor::setWaveformStatus(String pathForWaveform) {
+    waveformStatus = pathForWaveform;
+}
+
+String NewProjectAudioProcessor::getWaveformStatus() {
+    return waveformStatus;
+}
+
 //==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
