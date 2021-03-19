@@ -24,6 +24,7 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
 
     //SearchBar Input
     searchBarInput.setMultiLine(false);
+    searchBarInput.setText(processor.getTextEditorsStates(0));
     searchBarInput.setTextToShowWhenEmpty("Enter Youtube URL", Colours::whitesmoke);
     searchBarInput.setColour(TextEditor::ColourIds::backgroundColourId, Colours::lightslategrey);
     searchBarInput.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
@@ -43,14 +44,14 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
     setPathsButton.onClick = [this]() { return this->setPaths(); };
     
     //Status Label Text
-    statusLabel.setText("", dontSendNotification);
+    statusLabel.setText(processor.getTextEditorsStates(1), dontSendNotification);
     statusLabel.setFont(Font(15.0f, Font::FontStyleFlags::bold));
     statusLabel.setColour(Label::ColourIds::textColourId, Colours::dimgrey);
     statusLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(statusLabel);
     
     //Debug Label Text
-    debugText.setText("", dontSendNotification);
+    debugText.setText(processor.getTextEditorsStates(2), dontSendNotification);
     debugText.setColour(Label::ColourIds::textColourId, Colours::dimgrey);
     debugText.setJustificationType(Justification::centred);
     addAndMakeVisible(debugText);
@@ -71,6 +72,14 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
 
 CrateDigger::~CrateDigger()
 {
+    if (!(searchBarInput.isEmpty()))
+        processor.setTextEditorsStates(0, searchBarInput.getText());
+    
+    if (statusLabel.getText().isNotEmpty())
+        processor.setTextEditorsStates(1, statusLabel.getText());
+    
+    if (debugText.getText().isNotEmpty())
+        processor.setTextEditorsStates(2, debugText.getText());
 }
 
 void CrateDigger::paint (Graphics& g)
@@ -239,7 +248,6 @@ void CrateDigger::processDownload() {
     String filePath = ytdlChildProcess.readAllProcessOutput();
     filePath = filePath.replace("\n", "");
     filePath = filePath.replace("\r", "");
-    DBG(filePath);
     
     //Log to plugin result from library
     if (filePath.startsWith("Usage") || filePath.startsWith("WARNING") || filePath.startsWith("ERROR")) {

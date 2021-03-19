@@ -54,8 +54,15 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    
+    void setTextEditorsStates(int index, String textEditorInfo);
+    String getTextEditorsStates(int index);
 
 private:
+    
+    std::array<String, 3> textEditorsStates; //0-searchBarInput, 1-statusLabel, 2-debugText
+    String waveformStatus;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NewProjectAudioProcessor)
 };
