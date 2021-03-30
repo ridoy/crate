@@ -45,7 +45,7 @@ private:
     Label debugText;
     Waveform waveformComponent;
     
-    File downloadsFolder;
+    String downloadsFolder;
     LibrariesManager librariesManager;
     
     String filePath;
