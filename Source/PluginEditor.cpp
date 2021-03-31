@@ -272,7 +272,8 @@ void CrateDigger::processDownload() {
     
     //==============================================================================
     //Code if running in macOS
-    if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
+    if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) 
+    {
         String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
         ytdlChildProcess.start(ytdlCommand, 0x03);
         ytdlChildProcess.waitForProcessToFinish(300000);
@@ -283,12 +284,15 @@ void CrateDigger::processDownload() {
 
     //==============================================================================
     //Code if running in Windows
-    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
-        String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) 
+    {
+        ffmpegPathForChildProcess = "\"" + librariesManager.ffmpegPath + "\""; //Adding quotes at beginning and end of path to avoid error of ffmpeg when finding whitespaces in path
+
+        String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
         ytdlChildProcess.start(ytdlCommand, 0x03);
         ytdlChildProcess.waitForProcessToFinish(300000);
 
-        String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsFolder + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
+        String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsFolder + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
         ytdlChildProcess.start(ytdlCommandFilename, 0x03);
     }
     //==============================================================================

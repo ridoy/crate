@@ -156,16 +156,11 @@ void PathsWindow::buttonClicked(Button* buttonClicked) {
             {
                 File newLocationPath(fc.getResult());
 
-                if (newLocationPath.getFullPathName().isNotEmpty()) {
+                if (newLocationPath.getFullPathName().isNotEmpty()) 
+                {
                     ffmpegPath = newLocationPath.getFullPathName();
-
-                    if (ffmpegPath.isQuotedString()) {
-                        String ffmpegPathUnquoted = ffmpegPath.unquoted();
-                        ffmpegPathEditor.setText(ffmpegPathUnquoted, dontSendNotification);
-                    }
-                    else
-                        ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
-            }
+                    ffmpegPathEditor.setText(ffmpegPath, dontSendNotification);
+                }
         });
         
     }

@@ -49,6 +49,7 @@ private:
     LibrariesManager librariesManager;
     
     String filePath;
+    String ffmpegPathForChildProcess;
     
     PathsWindow pathsWindow;
     TextButton setPathsButton{"Set Paths"};
