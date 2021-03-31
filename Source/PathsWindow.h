@@ -25,20 +25,23 @@ public:
     void dismissWindow();
     void buttonClicked(Button*) override;
     
-    void setLibrariesPaths(String& youtubedlPath, String& ffmpegPath);
+    void setLibrariesPaths(String& _youtubedlPath, String& _ffmpegPath, String& _downloadsPath);
     String getYotubedlPath();
     String getFfmpegPath();
+    String getDownloadsPath();
     
     
 private:
-    Label instructionLabel, youtubedlPathLabel, ffmpegPathLabel;
-    TextEditor youtubedlPathEditor, ffmpegPathEditor;
-    TextButton  goBackButton{"Go Back"} ,browseYtdlButton {"Browse..."}, browseFfmpegButton{"Browse..."};
+    Label instructionLabel, youtubedlPathLabel, ffmpegPathLabel, downloadsPathLabel;
+    TextEditor youtubedlPathEditor, ffmpegPathEditor, downloadsPathEditor;
+    TextButton  goBackButton{"Go Back"} ,browseYtdlButton {"Browse..."}, browseFfmpegButton{"Browse..."}, browseDownloadsButton {"Browse..."};
     
-    String youtubedlPath, ffmpegPath;
+    String youtubedlPath, ffmpegPath, downloadsPath;
     
     LibrariesManager librariesManager;
     
-    int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+    int flagsForFiles = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles; //Flags for chooser async
+    int flagsForDirectories = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories; //Flags for chooser async
+    
     std::unique_ptr<FileChooser> chooser;
 };

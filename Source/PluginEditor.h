@@ -45,10 +45,11 @@ private:
     Label debugText;
     Waveform waveformComponent;
     
-    File downloadsFolder;
+    String downloadsFolder;
     LibrariesManager librariesManager;
     
     String filePath;
+    String ffmpegPathForChildProcess;
     
     PathsWindow pathsWindow;
     TextButton setPathsButton{"Set Paths"};
