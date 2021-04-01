@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="AmNz5M" name="CrateDigger" projectType="audioplug" pluginFormats="buildAU,buildVST3"
               displaySplashScreen="0" jucerFormatVersion="1" useAppConfig="1"
-              addUsingNamespaceToJuceHeader="1">
+              addUsingNamespaceToJuceHeader="1" companyName="CrateDigger">
   <MAINGROUP id="Qnixqo" name="CrateDigger">
     <GROUP id="{29DB2268-5733-9166-1D94-93DF4D5C0C8C}" name="Source">
       <FILE id="ugVGN2" name="PluginProcessor.cpp" compile="1" resource="0"
