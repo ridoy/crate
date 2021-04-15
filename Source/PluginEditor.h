@@ -34,6 +34,8 @@ public:
     void downloadVideo();
     void processDownload();
     void setPaths();
+    void updateLibrariesPaths();
+    void updateYoutubedl();
     
 private:
     NewProjectAudioProcessor& processor;
@@ -53,6 +55,8 @@ private:
     
     PathsWindow pathsWindow;
     TextButton setPathsButton{"Set Paths"};
+    
+    TextButton updateButton{"Update"};
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
 };

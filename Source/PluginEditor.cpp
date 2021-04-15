@@ -56,19 +56,25 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
     debugText.setJustificationType(Justification::centred);
     addAndMakeVisible(debugText);
     
+    //Check Paths
     checkPathFiles();
-                    
-//    downloadsFolder = LibrariesManager::getFolderDirectory(LibrariesManager::Folder::Downloads);
     librariesManager.getLocationsPaths();
     
+    //Waveform Component
     waveformComponent.loadFile(processor.getWaveformStatus());
     waveformComponent.setCurrentAudioFile(processor.getWaveformStatus());
     addAndMakeVisible(waveformComponent);
     
-    
+    //Set Paths Window
     addAndMakeVisible(pathsWindow);
     pathsWindow.setVisible(false);
     pathsWindow.setLibrariesPaths(librariesManager.youtubedlPath, librariesManager.ffmpegPath, librariesManager.downloadsPath);
+    
+    //Update Button
+    updateButton.setColour(TextButton::buttonColourId, Colours::darkblue);
+    updateButton.setAlpha(0.9f);
+    addAndMakeVisible(updateButton);
+    updateButton.onClick = [this]() { return this->updateYoutubedl(); };
     
     setSize (400, 400);
 }
@@ -113,6 +119,8 @@ void CrateDigger::resized()
     debugText.setBoundsRelative(0.05f, 0.78f, 0.9f, 0.15f);
     
     pathsWindow.setBoundsRelative(0.1f, 0.1f, 0.8f, 0.8f);
+    
+    updateButton.setBoundsRelative(0.1f, 0.35f, 0.1f, 0.1f);
 }
 
 void CrateDigger::checkPathFiles() {
@@ -158,17 +166,9 @@ void CrateDigger::downloadVideo()
 {
     //Code if running in macOS
     if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
-        //Update Libraries paths if changed
-        if ((librariesManager.youtubedlPath != pathsWindow.getYotubedlPath()) || (librariesManager.ffmpegPath != pathsWindow.getFfmpegPath()))
-        {
-            librariesManager.updateLibrariesPaths(pathsWindow.getYotubedlPath(), pathsWindow.getFfmpegPath());
-            librariesManager.updateDownloadsPath(pathsWindow.getDownloadsPath());
-        }
         
-        if ((librariesManager.downloadsPath != pathsWindow.getDownloadsPath()))
-        {
-            librariesManager.updateDownloadsPath(pathsWindow.getDownloadsPath());
-        }
+        //Update Libraries paths if changed
+        updateLibrariesPaths();
         
         File youtubedlLibrary(librariesManager.youtubedlPath);
         File ffmpegLibrary(librariesManager.ffmpegPath);
@@ -211,17 +211,9 @@ void CrateDigger::downloadVideo()
     //==============================================================================
     //Code if running in Windows
     if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) {
-        //Update Libraries paths if changed
-        if ((librariesManager.youtubedlPath != pathsWindow.getYotubedlPath()) || (librariesManager.ffmpegPath != pathsWindow.getFfmpegPath()))
-        {
-            librariesManager.updateLibrariesPaths(pathsWindow.getYotubedlPath(), pathsWindow.getFfmpegPath());
-            librariesManager.updateDownloadsPath(pathsWindow.getDownloadsPath());
-        }
         
-        if ((librariesManager.downloadsPath != pathsWindow.getDownloadsPath()))
-        {
-            librariesManager.updateDownloadsPath(pathsWindow.getDownloadsPath());
-        }
+        //Update Libraries paths if changed
+        updateLibrariesPaths();
         
         File youtubedlLibrary(librariesManager.youtubedlPath);
         File ffmpegLibrary(librariesManager.ffmpegPath);
@@ -314,6 +306,58 @@ void CrateDigger::processDownload() {
     }
 }
 
-void CrateDigger::setPaths() {
+void CrateDigger::setPaths()
+{
     pathsWindow.setVisible(true);
+}
+
+void CrateDigger::updateLibrariesPaths()
+{
+    if ((librariesManager.youtubedlPath != pathsWindow.getYotubedlPath()) || (librariesManager.ffmpegPath != pathsWindow.getFfmpegPath()))
+    {
+        librariesManager.updateLibrariesPaths(pathsWindow.getYotubedlPath(), pathsWindow.getFfmpegPath());
+        librariesManager.updateDownloadsPath(pathsWindow.getDownloadsPath());
+    }
+    
+    if ((librariesManager.downloadsPath != pathsWindow.getDownloadsPath()))
+    {
+        librariesManager.updateDownloadsPath(pathsWindow.getDownloadsPath());
+    }
+}
+
+void CrateDigger::updateYoutubedl()
+{
+    //Update Libraries paths if changed
+    updateLibrariesPaths();
+    
+    juce::ChildProcess updateYtdlProcess;
+    
+    if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0)
+    {
+        String updateCommand = "sudo " +  librariesManager.youtubedlPath + " --update";
+        updateYtdlProcess.start(updateCommand, 0x03);
+        updateYtdlProcess.waitForProcessToFinish(30000);
+        
+        String consoleOut = updateYtdlProcess.readAllProcessOutput();
+        consoleOut = consoleOut.replace("\n", "");
+        consoleOut = consoleOut.replace("\r", "");
+        
+        statusLabel.setText("Update Process Finished", dontSendNotification);
+        debugText.setText(consoleOut, dontSendNotification);
+    }
+    
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0)
+    {
+        String updateCommand = librariesManager.youtubedlPath + " --update";
+        updateYtdlProcess.start(updateCommand, 0x03);
+        updateYtdlProcess.waitForProcessToFinish(30000);
+        
+        String consoleOut = updateYtdlProcess.readAllProcessOutput();
+        consoleOut = consoleOut.replace("\n", "");
+        consoleOut = consoleOut.replace("\r", "");
+        
+        statusLabel.setText("Update Process Finished", dontSendNotification);
+        debugText.setText(consoleOut, dontSendNotification);
+    }
+    
 }
