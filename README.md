@@ -1,5 +1,8 @@
-# cratedigger-plugin
-YouTube to mp3 as a VST plugin. Get samples from YouTube easily in FL Studio, Ableton, and more.
+# Crate
+YouTube to MP3 VST Plugin. For music producers.
 
+Easily download samples from YouTube in your DAW.
+
+Tested with FL Studio, Ableton, Logic, and Reaper.
 
 http://cratedigger.me/
