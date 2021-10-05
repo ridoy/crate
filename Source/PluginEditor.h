@@ -21,18 +21,19 @@
 #include "LibrariesManager.h"
 #include "PathsWindow.h"
 
-class CrateDigger  : public AudioProcessorEditor,
+
+class Crate  : public AudioProcessorEditor,
 public DragAndDropContainer
 {
 public:
-    CrateDigger (NewProjectAudioProcessor&);
-    ~CrateDigger();
+    Crate (NewProjectAudioProcessor&);
+    ~Crate();
     
     void paint (Graphics&) override;
     void resized() override;
     void checkPathFiles();
-    void downloadVideo();
-    void processDownload();
+    void downloadVideo(Component::SafePointer<Crate> component, String& progress);
+    void processDownload(Component::SafePointer<Crate> component, String& progress);
     void setPaths();
     void updateLibrariesPaths();
     void updateYoutubedl();
@@ -46,18 +47,21 @@ private:
     Label statusLabel;
     Label debugText;
     Waveform waveformComponent;
-    
+    String progress;
+
     String downloadsFolder;
     LibrariesManager librariesManager;
     
+    void downloadCompleteCallback();
     String filePath;
     String ffmpegPathForChildProcess;
+    bool isDownloading = false;
     
     PathsWindow pathsWindow;
     TextButton setPathsButton{"Set Paths"};
     
     TextButton updateButton{"Update"};
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CrateDigger)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Crate)
 };
 

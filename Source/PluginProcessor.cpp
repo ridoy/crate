@@ -166,13 +166,13 @@ bool NewProjectAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* NewProjectAudioProcessor::createEditor()
 {
-    return new CrateDigger (*this);
+    return new Crate (*this);
 }
 
 //==============================================================================
 void NewProjectAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    ValueTree state("CrateDiggerTree");
+    ValueTree state("CrateTree");
     
     state.setProperty("SearchBar", textEditorsStates[0], nullptr);
     state.setProperty("StatusLabel", textEditorsStates[1], nullptr);

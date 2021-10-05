@@ -34,7 +34,7 @@ struct LibrariesManager
         if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0)
         {
             auto file = juce::File::getSpecialLocation(juce::File::globalApplicationsDirectory)
-                .getChildFile("CrateDigger-Audio");
+                .getChildFile("Crate-Audio");
 
             return createDirectory(file);
         }
@@ -44,7 +44,7 @@ struct LibrariesManager
         if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0)
         {
             auto file = juce::File::getSpecialLocation(juce::File::commonApplicationDataDirectory)
-                .getChildFile("CrateDigger-Audio");
+                .getChildFile("Crate-Audio");
 
             return createDirectory(file);
         }
@@ -69,17 +69,17 @@ struct LibrariesManager
         if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
             if (locationPath == "youtube-dl")
             {
-                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("/Applications/CrateDigger-Audio/youtube-dl");
+                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("/Applications/Crate-Audio/youtube-dl");
             }
             
             if (locationPath == "ffmpeg")
             {
-                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("/Applications/CrateDigger-Audio/ffmpeg");
+                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("/Applications/Crate-Audio/ffmpeg");
             }
             
             if (locationPath == "downloads")
             {
-                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("downloads_Path.txt").replaceWithText("/Applications/CrateDigger-Audio/Downloads");
+                createDirectory(getApplicationDataDirectory().getChildFile("macOS_Paths")).getChildFile("downloads_Path.txt").replaceWithText("/Applications/Crate-Audio/Downloads");
             }
             
         }
@@ -90,17 +90,17 @@ struct LibrariesManager
         {
             if (locationPath == "youtube-dl")
             {
-                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("C:\\ProgramData\\CrateDigger-Audio\\youtube-dl.exe");
+                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("youtube-dl_Path.txt").replaceWithText("C:\\ProgramData\\Crate-Audio\\youtube-dl.exe");
             }
 
             if (locationPath == "ffmpeg")
             {
-                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("\"C:\\ProgramData\\CrateDigger-Audio\\ffmpeg.exe\"");
+                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("ffmpeg_Path.txt").replaceWithText("\"C:\\ProgramData\\Crate-Audio\\ffmpeg.exe\"");
             }
             
             if (locationPath == "downloads")
             {
-                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("downloads_Path.txt").replaceWithText("C:\\ProgramData\\CrateDigger-Audio\\Downloads");
+                createDirectory(getApplicationDataDirectory().getChildFile("windows_Paths")).getChildFile("downloads_Path.txt").replaceWithText("C:\\ProgramData\\Crate-Audio\\Downloads");
             }
             
         }

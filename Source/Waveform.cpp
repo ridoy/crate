@@ -63,7 +63,7 @@ void Waveform::paintIfNoFileLoaded(Graphics& g, const Rectangle<int>& thumbnailB
     g.setColour(Colours::lightgrey);
     g.fillRect(thumbnailBounds);
     g.setColour(Colours::dimgrey);
-    g.drawFittedText("No File Downloaded", thumbnailBounds, Justification::centred, 1);
+    g.drawFittedText("Downloaded audio will appear here.", thumbnailBounds, Justification::centred, 1);
 }
 void Waveform::paintIfFileLoaded(Graphics& g, const Rectangle<int>& thumbnailBounds) {
     g.setColour(Colours::lightgrey);

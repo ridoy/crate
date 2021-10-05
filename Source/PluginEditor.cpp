@@ -11,12 +11,14 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include <thread>
+#include <regex>
 
-CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
+
+Crate::Crate (NewProjectAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {
     //Title Plugin Name
-    namePlugin.setText("CrateDigger v1.0", dontSendNotification);
+    namePlugin.setText("Crate v1.1", dontSendNotification);
     namePlugin.setColour(Label::ColourIds::textColourId, Colours::darkblue);
     namePlugin.setFont(Font(40.0f, Font::FontStyleFlags::bold));
     namePlugin.setJustificationType(Justification::centred);
@@ -32,14 +34,30 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
     addAndMakeVisible(searchBarInput);
     
     //Download Button
+    downloadButton.setEnabled(true);
     downloadButton.setColour(TextButton::buttonColourId, Colours::darkblue);
     downloadButton.setAlpha(0.9f);
     addAndMakeVisible(downloadButton);
-    downloadButton.onClick = [this]() { return this->downloadVideo(); };
-    
+
+    downloadButton.onClick = [this]
+        {
+            isDownloading = true;
+            progress = "0.0%";
+            downloadButton.setButtonText(progress);
+            downloadButton.setEnabled(false);
+            Thread::launch ([sp = SafePointer<Crate> (this)] () mutable
+                            {
+                                sp->downloadVideo(sp, sp->progress);
+                                MessageManager::getInstance()->callAsync ([sp] () mutable
+                                                                          {
+                                                                              if (sp != nullptr)
+                                                                                  sp->downloadCompleteCallback();
+                                                                          });
+                            });
+        };
     //Set Paths Button
     setPathsButton.setColour(TextButton::buttonColourId, Colours::darkblue);
-    setPathsButton.setAlpha(0.7f);
+//    setPathsButton.setAlpha(0.7f);
     addAndMakeVisible(setPathsButton);
     setPathsButton.onClick = [this]() { return this->setPaths(); };
     
@@ -79,7 +97,7 @@ CrateDigger::CrateDigger (NewProjectAudioProcessor& p)
     setSize (400, 400);
 }
 
-CrateDigger::~CrateDigger()
+Crate::~Crate()
 {
     if (!(searchBarInput.isEmpty()))
         processor.setTextEditorsStates(0, searchBarInput.getText());
@@ -94,23 +112,25 @@ CrateDigger::~CrateDigger()
         processor.setWaveformStatus(filePath);
 }
 
-void CrateDigger::paint (Graphics& g)
+void Crate::paint (Graphics& g)
 {
     g.fillAll(Colours::white);
     
     pathsWindow.setAlpha(0.95f);
-    
+    if (isDownloading) {
+        downloadButton.setButtonText(progress);
+    }
 }
 
-void CrateDigger::resized()
+void Crate::resized()
 {
     namePlugin.setBoundsRelative(0.0f, 0.0f, 1.0f, 0.2f);
     
     searchBarInput.setBoundsRelative(0.1f, 0.25f, 0.8f, 0.07f);
-  
-    downloadButton.setBoundsRelative(0.55f, 0.35f, 0.2f, 0.1f);
     
-    setPathsButton.setBoundsRelative(0.25f, 0.35f, 0.2f, 0.1f);
+    updateButton.setBoundsRelative(0.1f, 0.35f, 0.2f, 0.1f);
+    setPathsButton.setBoundsRelative(0.35f, 0.35f, 0.2f, 0.1f);
+    downloadButton.setBoundsRelative(0.6f, 0.35f, 0.3f, 0.1f);
     
     waveformComponent.setBoundsRelative(0.05f, 0.5f, 0.90f, 0.2f);
     
@@ -119,11 +139,10 @@ void CrateDigger::resized()
     debugText.setBoundsRelative(0.05f, 0.78f, 0.9f, 0.15f);
     
     pathsWindow.setBoundsRelative(0.1f, 0.1f, 0.8f, 0.8f);
-    
-    updateButton.setBoundsRelative(0.1f, 0.35f, 0.1f, 0.1f);
+
 }
 
-void CrateDigger::checkPathFiles() {
+void Crate::checkPathFiles() {
     //Code if running in macOS
     if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
         bool pathFileExists = LibrariesManager::getApplicationDataDirectory().getChildFile("macOS_Paths").getChildFile("youtube-dl_Path.txt").exists();
@@ -162,8 +181,10 @@ void CrateDigger::checkPathFiles() {
     }
 }
 
-void CrateDigger::downloadVideo()
+void Crate::downloadVideo(Component::SafePointer<Crate> component, String& progress)
 {
+    Logger::getCurrentLogger()->writeToLog("At downloadVideo()");
+
     //Code if running in macOS
     if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) {
         
@@ -190,7 +211,7 @@ void CrateDigger::downloadVideo()
         
         switch (librariesExistsCase) {
             case 0:
-                processDownload();
+                processDownload(component, progress);
                 break;
             case 1:
                 AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
@@ -203,7 +224,7 @@ void CrateDigger::downloadVideo()
                 break;
                 
             default:
-                processDownload();
+                processDownload(component, progress);
                 break;
         }
     }
@@ -235,7 +256,7 @@ void CrateDigger::downloadVideo()
         
         switch (librariesExistsCase) {
             case 0:
-                processDownload();
+                processDownload(component, progress);
                 break;
             case 1:
                 AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
@@ -248,70 +269,88 @@ void CrateDigger::downloadVideo()
                 break;
                 
             default:
-                processDownload();
+                processDownload(component, progress);
                 break;
         }
     }
 }
 
-void CrateDigger::processDownload() {
-    
-    
+void Crate::processDownload(Component::SafePointer<Crate> component, String& progress) {
+
+    Logger::getCurrentLogger()->writeToLog("[Crate] At processDownload()");
     juce::ChildProcess ytdlChildProcess;
     String youtubeUrl = searchBarInput.getTextValue().toString();
     
     //Process download
-    
     //==============================================================================
-    //Code if running in macOS
-    if ((SystemStats::getOperatingSystemType() & SystemStats::MacOSX) != 0) 
+
+    String ffmpegPathForChildProcess = librariesManager.ffmpegPath;
+    // If on Windows, add quotes at beginning and end of path to avoid error of ffmpeg when finding whitespaces in path
+    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0)
     {
-        String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
-        ytdlChildProcess.start(ytdlCommand, 0x03);
-        ytdlChildProcess.waitForProcessToFinish(300000);
-        
-        String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsFolder + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + librariesManager.ffmpegPath + " " + youtubeUrl;
-        ytdlChildProcess.start(ytdlCommandFilename, 0x03);
+        ffmpegPathForChildProcess = "\"" + librariesManager.ffmpegPath + "\"";
+    }
+    String ytdlCommand = librariesManager.youtubedlPath + " --newline -k --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
+    String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsFolder + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
+
+    ytdlChildProcess.start(ytdlCommand, 0x03);
+
+    // Update progress bar while process runs.
+    while (ytdlChildProcess.isRunning()) {
+        char buffer[512];
+        ytdlChildProcess.readProcessOutput(buffer, 512);
+        std::string s (buffer);
+        std::smatch m;
+        std::regex e ("[0-9.]+\%");
+        while (std::regex_search (s,m,e)) {
+            progress = m.str();
+            s = m.suffix().str();
+        }
+        MessageManager::getInstance()->callAsync ([component] () mutable
+                                                  {
+                                                      if (component != nullptr)
+                                                          component->repaint();
+                                                  });
+
     }
 
-    //==============================================================================
-    //Code if running in Windows
-    if ((SystemStats::getOperatingSystemType() & SystemStats::Windows) != 0) 
-    {
-        ffmpegPathForChildProcess = "\"" + librariesManager.ffmpegPath + "\""; //Adding quotes at beginning and end of path to avoid error of ffmpeg when finding whitespaces in path
+    Logger::getCurrentLogger()->writeToLog("[Crate] Getting filename.");
+    ytdlChildProcess.start(ytdlCommandFilename, 0x03);
+    Logger::getCurrentLogger()->writeToLog("[Crate] Got filename.");
 
-        String ytdlCommand = librariesManager.youtubedlPath + " --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
-        ytdlChildProcess.start(ytdlCommand, 0x03);
-        ytdlChildProcess.waitForProcessToFinish(300000);
-
-        String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsFolder + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
-        ytdlChildProcess.start(ytdlCommandFilename, 0x03);
-    }
     //==============================================================================
-    
+
     filePath = ytdlChildProcess.readAllProcessOutput();
+    Logger::getCurrentLogger()->writeToLog(filePath);
     filePath = filePath.replace("\n", "");
     filePath = filePath.replace("\r", "");
-    
+
+}
+
+void Crate::downloadCompleteCallback() {
     //Log to plugin result from library
     if (filePath.startsWith("Usage") || filePath.startsWith("WARNING") || filePath.startsWith("ERROR")) {
         waveformComponent.resetThumbnail();
         statusLabel.setText("Download Error", dontSendNotification);
         debugText.setText(filePath, dontSendNotification);
+        filePath = "";
     } else {
         waveformComponent.loadFile(filePath);
         waveformComponent.setCurrentAudioFile(filePath);
         statusLabel.setText("Done loading, drag waveform into your DAW", dontSendNotification);
         debugText.setText(filePath, dontSendNotification);
     }
+    downloadButton.setEnabled(true);
+    downloadButton.setButtonText("Download");
+    isDownloading = false;
 }
 
-void CrateDigger::setPaths()
+void Crate::setPaths()
 {
     pathsWindow.setVisible(true);
 }
 
-void CrateDigger::updateLibrariesPaths()
+void Crate::updateLibrariesPaths()
 {
     if ((librariesManager.youtubedlPath != pathsWindow.getYotubedlPath()) || (librariesManager.ffmpegPath != pathsWindow.getFfmpegPath()))
     {
@@ -325,7 +364,7 @@ void CrateDigger::updateLibrariesPaths()
     }
 }
 
-void CrateDigger::updateYoutubedl()
+void Crate::updateYoutubedl()
 {
     //Update Libraries paths if changed
     updateLibrariesPaths();
