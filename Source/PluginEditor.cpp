@@ -214,13 +214,13 @@ void Crate::downloadVideo(Component::SafePointer<Crate> component, String& progr
                 processDownload(component, progress);
                 break;
             case 1:
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
                 break;
             case 2:
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Ffmpeg library found", "Check Ffmpeg library path", "Close", nullptr);
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "No Ffmpeg library found", "Check Ffmpeg library path", "Close", nullptr);
                 break;
             case 3:
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl library found", "Check Youtube-dl library path", "Close", nullptr);
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "No Youtube-dl library found", "Check Youtube-dl library path", "Close", nullptr);
                 break;
                 
             default:
@@ -259,13 +259,13 @@ void Crate::downloadVideo(Component::SafePointer<Crate> component, String& progr
                 processDownload(component, progress);
                 break;
             case 1:
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "No Youtube-dl and ffmpeg libraries found", "Check Youtube-dl and ffmpeg libraries libraries paths", "Close", nullptr);
                 break;
             case 2:
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Ffmpeg library found", "Check Ffmpeg library path", "Close", nullptr);
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "No Ffmpeg library found", "Check Ffmpeg library path", "Close", nullptr);
                 break;
             case 3:
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "No Youtube-dl library found", "Check Youtube-dl library path", "Close", nullptr);
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "No Youtube-dl library found", "Check Youtube-dl library path", "Close", nullptr);
                 break;
                 
             default:
