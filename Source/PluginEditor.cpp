@@ -32,6 +32,12 @@ Crate::Crate (NewProjectAudioProcessor& p)
     searchBarInput.setColour (TextEditor::outlineColourId, Colour (0x1c000000));
     searchBarInput.setColour (TextEditor::shadowColourId,  Colour (0x16000000));
     addAndMakeVisible(searchBarInput);
+
+    //Update Button
+    updateButton.setColour(TextButton::buttonColourId, Colours::darkblue);
+    updateButton.setAlpha(0.9f);
+    addAndMakeVisible(updateButton);
+    updateButton.onClick = [this]() { return this->updateYoutubedl(); };
     
     //Download Button
     downloadButton.setEnabled(true);
@@ -45,7 +51,9 @@ Crate::Crate (NewProjectAudioProcessor& p)
             progress = "0.0%";
             downloadButton.setButtonText(progress);
             downloadButton.setEnabled(false);
-            Thread::launch ([sp = SafePointer<Crate> (this)] () mutable
+
+            auto sp = SafePointer<Crate>(this);
+            Thread::launch ([ sp ] () mutable
                             {
                                 sp->downloadVideo(sp, sp->progress);
                                 MessageManager::getInstance()->callAsync ([sp] () mutable
@@ -87,12 +95,6 @@ Crate::Crate (NewProjectAudioProcessor& p)
     addAndMakeVisible(pathsWindow);
     pathsWindow.setVisible(false);
     pathsWindow.setLibrariesPaths(librariesManager.youtubedlPath, librariesManager.ffmpegPath, librariesManager.downloadsPath);
-    
-    //Update Button
-    updateButton.setColour(TextButton::buttonColourId, Colours::darkblue);
-    updateButton.setAlpha(0.9f);
-    addAndMakeVisible(updateButton);
-    updateButton.onClick = [this]() { return this->updateYoutubedl(); };
     
     setSize (400, 400);
 }
