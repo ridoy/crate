@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="AmNz5M" name="Crate" projectType="audioplug" pluginFormats="buildAU,buildVST3"
               displaySplashScreen="0" jucerFormatVersion="1" useAppConfig="1"
-              addUsingNamespaceToJuceHeader="1" companyName="Crate" version="1.0.1"
+              addUsingNamespaceToJuceHeader="1" companyName="Crate" version="1.1.0"
               pluginAUIsSandboxSafe="1">
   <MAINGROUP id="Qnixqo" name="Crate">
     <GROUP id="{29DB2268-5733-9166-1D94-93DF4D5C0C8C}" name="Source">

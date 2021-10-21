@@ -292,7 +292,7 @@ void Crate::processDownload(Component::SafePointer<Crate> component, String& pro
     {
         ffmpegPathForChildProcess = "\"" + librariesManager.ffmpegPath + "\"";
     }
-    String ytdlCommand = librariesManager.youtubedlPath + " --newline -k --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
+    String ytdlCommand = librariesManager.youtubedlPath + " --newline --output " + downloadsFolder + "/%(title)s.%(ext)s --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
     String ytdlCommandFilename = librariesManager.youtubedlPath + " --get-filename --output " + downloadsFolder + "/%(title)s.mp3 --extract-audio --audio-format mp3 --ffmpeg-location " + ffmpegPathForChildProcess + " " + youtubeUrl;
 
     ytdlChildProcess.start(ytdlCommand, 0x03);
