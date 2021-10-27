@@ -12,7 +12,7 @@
 #include "PluginEditor.h"
 #include <thread>
 #include <regex>
-
+#include "Global.h"
 
 Crate::Crate (NewProjectAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
@@ -326,7 +326,18 @@ void Crate::processDownload(Component::SafePointer<Crate> component, String& pro
     Logger::getCurrentLogger()->writeToLog(filePath);
     filePath = filePath.replace("\n", "");
     filePath = filePath.replace("\r", "");
-
+    
+    //Saving variables status when download finishes and window is closed
+    processor.setWaveformStatus(filePath);
+    if (filePath.startsWith("Usage") || filePath.startsWith("WARNING") || filePath.startsWith("ERROR")) {
+        processor.setWaveformStatus("");
+        processor.setTextEditorsStates(1, "Download Error"); //status Label
+        processor.setTextEditorsStates(2, filePath); //debug Label
+    } else {
+        processor.setWaveformStatus(filePath);
+        processor.setTextEditorsStates(1, "Done loading, drag waveform into your DAW"); //status Label
+        processor.setTextEditorsStates(2, filePath); //debug Label
+    }
 }
 
 void Crate::downloadCompleteCallback() {
