@@ -48,8 +48,8 @@ Crate::Crate (NewProjectAudioProcessor& p)
     downloadButton.onClick = [this]
         {
             isDownloading = true;
-            progress = "0.0%";
-            downloadButton.setButtonText(progress);
+            progress.set(0.0);
+            downloadButton.setButtonText(static_cast<String>(progress.get()) + "%");
             downloadButton.setEnabled(false);
 
             auto sp = SafePointer<Crate>(this);
@@ -70,14 +70,16 @@ Crate::Crate (NewProjectAudioProcessor& p)
     setPathsButton.onClick = [this]() { return this->setPaths(); };
     
     //Status Label Text
-    statusLabel.setText(processor.getTextEditorsStates(1), dontSendNotification);
+//    statusLabel.setText(processor.getTextEditorsStates(1), dontSendNotification);
+    statusLabel.setText(global.statusLabelText, dontSendNotification);
     statusLabel.setFont(Font(15.0f, Font::FontStyleFlags::bold));
     statusLabel.setColour(Label::ColourIds::textColourId, Colours::dimgrey);
     statusLabel.setJustificationType(Justification::centred);
     addAndMakeVisible(statusLabel);
     
     //Debug Label Text
-    debugText.setText(processor.getTextEditorsStates(2), dontSendNotification);
+//    debugText.setText(processor.getTextEditorsStates(2), dontSendNotification);
+    debugText.setText(global.debugLabelText, dontSendNotification);
     debugText.setColour(Label::ColourIds::textColourId, Colours::dimgrey);
     debugText.setJustificationType(Justification::centred);
     addAndMakeVisible(debugText);
@@ -87,8 +89,8 @@ Crate::Crate (NewProjectAudioProcessor& p)
     librariesManager.getLocationsPaths();
     
     //Waveform Component
-    waveformComponent.loadFile(processor.getWaveformStatus());
-    waveformComponent.setCurrentAudioFile(processor.getWaveformStatus());
+    waveformComponent.loadFile(global.pathFile);
+    waveformComponent.setCurrentAudioFile(global.pathFile);
     addAndMakeVisible(waveformComponent);
     
     //Set Paths Window
@@ -110,8 +112,8 @@ Crate::~Crate()
     if (debugText.getText().isNotEmpty())
         processor.setTextEditorsStates(2, debugText.getText());
     
-    if (filePath.isNotEmpty())
-        processor.setWaveformStatus(filePath);
+    if (global.pathFile.isNotEmpty())
+        processor.setWaveformStatus(global.pathFile);
 }
 
 void Crate::paint (Graphics& g)
@@ -120,7 +122,7 @@ void Crate::paint (Graphics& g)
     
     pathsWindow.setAlpha(0.95f);
     if (isDownloading) {
-        downloadButton.setButtonText(progress);
+        downloadButton.setButtonText(static_cast<String>(progress.get()) + "%");
     }
 }
 
@@ -183,7 +185,7 @@ void Crate::checkPathFiles() {
     }
 }
 
-void Crate::downloadVideo(Component::SafePointer<Crate> component, String& progress)
+void Crate::downloadVideo(Component::SafePointer<Crate> component, Atomic<double>& progress)
 {
     Logger::getCurrentLogger()->writeToLog("At downloadVideo()");
 
@@ -277,7 +279,7 @@ void Crate::downloadVideo(Component::SafePointer<Crate> component, String& progr
     }
 }
 
-void Crate::processDownload(Component::SafePointer<Crate> component, String& progress) {
+void Crate::processDownload(Component::SafePointer<Crate> component, Atomic<double>& progress) {
 
     Logger::getCurrentLogger()->writeToLog("[Crate] At processDownload()");
     juce::ChildProcess ytdlChildProcess;
@@ -305,7 +307,7 @@ void Crate::processDownload(Component::SafePointer<Crate> component, String& pro
         std::smatch m;
         std::regex e ("[0-9.]+\%");
         while (std::regex_search (s,m,e)) {
-            progress = m.str();
+            progress = std::stod(m.str());
             s = m.suffix().str();
         }
         MessageManager::getInstance()->callAsync ([component] () mutable
@@ -322,36 +324,41 @@ void Crate::processDownload(Component::SafePointer<Crate> component, String& pro
 
     //==============================================================================
 
-    filePath = ytdlChildProcess.readAllProcessOutput();
-    Logger::getCurrentLogger()->writeToLog(filePath);
-    filePath = filePath.replace("\n", "");
-    filePath = filePath.replace("\r", "");
+    global.pathFile = ytdlChildProcess.readAllProcessOutput();
+    Logger::getCurrentLogger()->writeToLog(global.pathFile);
+    global.pathFile = global.pathFile.replace("\n", "");
+    global.pathFile = global.pathFile.replace("\r", "");
     
     //Saving variables status when download finishes and window is closed
-    processor.setWaveformStatus(filePath);
-    if (filePath.startsWith("Usage") || filePath.startsWith("WARNING") || filePath.startsWith("ERROR")) {
-        processor.setWaveformStatus("");
-        processor.setTextEditorsStates(1, "Download Error"); //status Label
-        processor.setTextEditorsStates(2, filePath); //debug Label
+//    processor.setWaveformStatus(global.pathFile);
+    if (global.pathFile.startsWith("Usage") || global.pathFile.startsWith("WARNING") || global.pathFile.startsWith("ERROR")) {
+//        processor.setWaveformStatus("");
+//        processor.setTextEditorsStates(1, "Download Error"); //status Label
+//        processor.setTextEditorsStates(2, global.pathFile); //debug Label
+        global.pathFile = "";
+        global.statusLabelText = "Download Error";
+        global.debugLabelText = global.pathFile;
     } else {
-        processor.setWaveformStatus(filePath);
-        processor.setTextEditorsStates(1, "Done loading, drag waveform into your DAW"); //status Label
-        processor.setTextEditorsStates(2, filePath); //debug Label
+//        processor.setWaveformStatus(global.pathFile);
+//        processor.setTextEditorsStates(1, "Done loading, drag waveform into your DAW"); //status Label
+//        processor.setTextEditorsStates(2, global.pathFile); //debug Label
+        global.statusLabelText = "Done loading, drag waveform into your DAW";
+        global.debugLabelText = global.pathFile;
     }
 }
 
 void Crate::downloadCompleteCallback() {
     //Log to plugin result from library
-    if (filePath.startsWith("Usage") || filePath.startsWith("WARNING") || filePath.startsWith("ERROR")) {
+    if (global.pathFile.startsWith("Usage") || global.pathFile.startsWith("WARNING") || global.pathFile.startsWith("ERROR")) {
         waveformComponent.resetThumbnail();
         statusLabel.setText("Download Error", dontSendNotification);
-        debugText.setText(filePath, dontSendNotification);
-        filePath = "";
+        debugText.setText(global.pathFile, dontSendNotification);
+        global.pathFile = "";
     } else {
-        waveformComponent.loadFile(filePath);
-        waveformComponent.setCurrentAudioFile(filePath);
+        waveformComponent.loadFile(global.pathFile);
+        waveformComponent.setCurrentAudioFile(global.pathFile);
         statusLabel.setText("Done loading, drag waveform into your DAW", dontSendNotification);
-        debugText.setText(filePath, dontSendNotification);
+        debugText.setText(global.pathFile, dontSendNotification);
     }
     downloadButton.setEnabled(true);
     downloadButton.setButtonText("Download");
