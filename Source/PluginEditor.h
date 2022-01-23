@@ -32,8 +32,8 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void checkPathFiles();
-    void downloadVideo(Component::SafePointer<Crate> component, String& progress);
-    void processDownload(Component::SafePointer<Crate> component, String& progress);
+    void downloadVideo(Component::SafePointer<Crate> component, Atomic<double>& progress);
+    void processDownload(Component::SafePointer<Crate> component, Atomic<double>& progress);
     void setPaths();
     void updateLibrariesPaths();
     void updateYoutubedl();
@@ -47,7 +47,8 @@ private:
     Label statusLabel;
     Label debugText;
     Waveform waveformComponent;
-    String progress;
+//    String progress;
+    Atomic<double> progress;
 
     String downloadsFolder;
     LibrariesManager librariesManager;

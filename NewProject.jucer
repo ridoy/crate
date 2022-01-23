@@ -19,6 +19,7 @@
             file="Source/LibrariesManager.h"/>
       <FILE id="q2cHns" name="PathsWindow.cpp" compile="1" resource="0" file="Source/PathsWindow.cpp"/>
       <FILE id="bUgLOq" name="PathsWindow.h" compile="0" resource="0" file="Source/PathsWindow.h"/>
+      <FILE id="d7tDQM" name="Global.h" compile="0" resource="0" file="Source/Global.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
