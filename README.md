@@ -1,11 +1,16 @@
 # Crate
+
+![Crate VST appearance](https://www.cratevst.com/img/demo.png)
+
+http://cratevst.com
+
 YouTube to MP3 VST Plugin. For music producers.
 
 Easily download samples from YouTube in your DAW.
 
 Tested with FL Studio, Ableton, Logic, and Reaper.
 
-http://cratevst.com
+
 
 Requires macOS 10.15+ or Windows 7+
 
