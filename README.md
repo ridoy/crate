@@ -2,7 +2,7 @@
 
 ![Crate VST appearance](https://www.cratevst.com/img/demo.png)
 
-http://cratevst.com
+https://cratevst.com
 </div>
 
 <b>Crate</b> is a YouTube to MP3 VST Plugin for music producers.
