@@ -1,5 +1,13 @@
 <div align="center">
 
+# DISCONTINUED
+  
+Crate still works, but with lack of interest and youtube-dl being dead, I've pretty much abandonded this project.
+  
+If you want to use it, I highly recommend going to the installation folder and swapping youtube-dl with [yt-dlp](https://github.com/yt-dlp/yt-dlp), which is a youtube-dl fork still under active development.
+  
+*If you're a developer I encourage you to fork this project and maintain it. People seem to like it. I've left a checklist of work to do below*
+  
 ![Crate VST appearance](https://www.cratevst.com/img/demo.png)
 
 https://cratevst.com
