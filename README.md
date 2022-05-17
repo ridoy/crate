@@ -6,7 +6,9 @@
   
 Crate still works, but with lack of interest and youtube-dl being dead, I've pretty much abandonded this project.
   
-If you want to use it, I highly recommend going to the installation folder and swapping youtube-dl with [yt-dlp](https://github.com/yt-dlp/yt-dlp), which is a youtube-dl fork still under active development.
+If you want to use it, I highly recommend going to the Crate-Audio folder after you've installed and swapping youtube-dl with [yt-dlp](https://github.com/yt-dlp/yt-dlp), which is a youtube-dl fork still under active development.
+  
+(Installers are on http://cratevst.com)
   
 ![Crate VST appearance](https://www.cratevst.com/img/demo.png)
 
