@@ -39,6 +39,6 @@ This personally happened to me when updating from macOS 10.14 to 12. You should 
 
 If you have questions you can open an issue here and I'll still respond.
 
-[ ] Fix auto-updating. Google wants yt-dlp dead, so the library is constantly updated. Updates should be checked for and installed in the background. Crate users are musicians, they don't want any exposure to that stuff. 
-[ ] Clean up the design. We designed it quickly for the proof-of-concept, but it could be better.
-[ ] Save favorite samples. The typical user experience is something like Browse Youtube -> Find cool sample -> Copy paste the URL. Making it easier to come back to a sample from months ago would be cool.
+- [ ] Fix auto-updating. Google wants yt-dlp dead, so the library is constantly updated. Updates should be checked for and installed in the background. Crate users are musicians, they don't want any exposure to that stuff. 
+- [ ] Clean up the design. We designed it quickly for the proof-of-concept, but it could be better.
+- [ ] Save favorite samples. The typical user experience is something like Browse Youtube -> Find cool sample -> Copy paste the URL. Making it easier to come back to a sample from months ago would be cool.
